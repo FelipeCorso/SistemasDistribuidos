@@ -1,0 +1,9 @@
+module moduloCompra {
+
+
+  interface compra {
+    
+    boolean recebeNota();
+    boolean comunicaEstoque();
+  };
+};
