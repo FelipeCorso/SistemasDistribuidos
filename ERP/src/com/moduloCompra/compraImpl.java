@@ -4,6 +4,10 @@ import org.omg.CosNaming.*;
 import org.omg.CORBA.*;
 import com.moduloCompra.*;
 
+import Estoque.Produto;
+
+import com.*;
+
 class compraImpl extends compraPOA {  
 
   public boolean recebeNota () {
@@ -12,7 +16,12 @@ class compraImpl extends compraPOA {
   };
 
   public boolean comunicaEstoque () {  	  
-	  System.out.println("Compras comunicou o estoque sobre o produto recebido");
+	  compraClientEstoque clientEstoque = new compraClientEstoque();
+		Produto produto = new Produto();
+		produto.setCodigoProduto(1);
+		produto.setDescricaoProduto("ServerCompras");
+		produto.setQtdProduto(2);	  
+	    clientEstoque.solicitandoEstoque(produto);
   	  return true;
   };
 
