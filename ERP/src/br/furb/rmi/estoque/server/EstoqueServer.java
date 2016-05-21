@@ -1,14 +1,13 @@
 /** HelloServer.java **/
 package br.furb.rmi.estoque.server;
 
-import java.rmi.*;
-import java.rmi.server.*;
+import java.rmi.Naming;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
 import br.furb.common.Produto;
 import br.furb.rmi.estoque.Estoque;
-
-import java.rmi.registry.*;
 
 public class EstoqueServer extends UnicastRemoteObject implements Estoque {
 	public EstoqueServer() throws RemoteException {
@@ -27,11 +26,11 @@ public class EstoqueServer extends UnicastRemoteObject implements Estoque {
 
 	public String receberProduto(ArrayList<Produto> produto) throws RemoteException {
 
-		for (Produto umProduto: produto){	
-			if (produtoExiste(umProduto.getCodigoProduto())) 
-	           IncrementaQtdProduto(umProduto);
+		for (Produto umProduto : produto) {
+			if (produtoExiste(umProduto.getCodigoProduto()))
+				IncrementaQtdProduto(umProduto);
 			else
-			   AdicionaProduto(umProduto);							
+				AdicionaProduto(umProduto);
 		}
 		System.out.println("Executando receberProduto()");
 
@@ -46,7 +45,7 @@ public class EstoqueServer extends UnicastRemoteObject implements Estoque {
 
 	public void AdicionaProduto(Produto produto) {
 		System.out.println("Executando AdicionaProduto()");
-		// Cria um produto novo no estoque		
+		// Cria um produto novo no estoque
 	}
 
 	public void IncrementaQtdProduto(Produto produto) {
@@ -54,7 +53,7 @@ public class EstoqueServer extends UnicastRemoteObject implements Estoque {
 		System.out.println(produto.getCodigoProduto());
 		System.out.println(produto.getDescricaoProduto());
 		System.out.println(produto.getQtdProduto());
-		
+
 		// Incrementa a quantidade de um produto já existente.
 	}
 

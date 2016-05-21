@@ -1,7 +1,8 @@
 /** HelloWorld.java **/
 package br.furb.rmi.estoque;
 
-import java.rmi.*;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import br.furb.common.Produto;

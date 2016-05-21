@@ -1,7 +1,6 @@
 package br.furb.rmi.estoque;
 
 import java.applet.Applet;
-import java.awt.Graphics;
 import java.rmi.Naming;
 import java.util.ArrayList;
 

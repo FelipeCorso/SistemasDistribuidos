@@ -1,7 +1,7 @@
 package br.furb.corba.compra;
 
 import br.furb.common.Produto;
-import br.furb.corba.compra.client.compraClientEstoque;
+import br.furb.corba.compra.client.CompraClientEstoque;
 
 public class CompraImpl extends CompraPOA {
 
@@ -11,7 +11,7 @@ public class CompraImpl extends CompraPOA {
 	};
 
 	public boolean comunicaEstoque() {
-		compraClientEstoque clientEstoque = new compraClientEstoque();
+		CompraClientEstoque clientEstoque = new CompraClientEstoque();
 		Produto produto = new Produto();
 		produto.setCodigoProduto(1);
 		produto.setDescricaoProduto("ServerCompras");

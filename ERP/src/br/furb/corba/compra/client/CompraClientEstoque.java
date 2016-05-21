@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import br.furb.common.Produto;
 import br.furb.rmi.estoque.Estoque;
 
-public class compraClientEstoque {
+public class CompraClientEstoque {
 	public void solicitandoEstoque(Produto produto) {
 		try {
 			ArrayList<Produto> listaProduto = new ArrayList<Produto>();
