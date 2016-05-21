@@ -1,0 +1,12 @@
+module br {
+	module furb {
+		module corba {
+			module compra {
+				interface Compra {
+				    boolean recebeNota();
+				    boolean comunicaEstoque();
+				};
+			};
+		};
+	};
+};

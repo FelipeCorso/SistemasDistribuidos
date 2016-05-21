@@ -1,10 +1,10 @@
-package com;
+package br.furb.corba.compra.client;
 
 import java.rmi.Naming;
 import java.util.ArrayList;
 
-import Estoque.Estoque;
-import Estoque.Produto;
+import br.furb.common.Produto;
+import br.furb.rmi.estoque.Estoque;
 
 public class compraClientEstoque {
 	public void solicitandoEstoque(Produto produto) {

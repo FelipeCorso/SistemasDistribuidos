@@ -1,9 +1,13 @@
 /** HelloServer.java **/
-package Estoque;
+package br.furb.rmi.estoque.server;
 
 import java.rmi.*;
 import java.rmi.server.*;
 import java.util.ArrayList;
+
+import br.furb.common.Produto;
+import br.furb.rmi.estoque.Estoque;
+
 import java.rmi.registry.*;
 
 public class EstoqueServer extends UnicastRemoteObject implements Estoque {

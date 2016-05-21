@@ -1,7 +1,10 @@
-package venda;
+package br.furb.ws.venda.client;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
+
+import br.furb.ws.venda.server.VendaServerInterface;
+
 import java.net.URL;
  
 class VendaClient {

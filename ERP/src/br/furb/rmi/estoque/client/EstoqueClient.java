@@ -1,8 +1,11 @@
 /** HelloClient.java **/
-package Estoque;
+package br.furb.rmi.estoque.client;
 
 import java.rmi.Naming;
 import java.util.ArrayList;
+
+import br.furb.common.Produto;
+import br.furb.rmi.estoque.Estoque;
 
 public class EstoqueClient {
    public static void main(String[] args) {

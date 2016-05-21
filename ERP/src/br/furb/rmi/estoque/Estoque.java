@@ -1,8 +1,10 @@
 /** HelloWorld.java **/
-package Estoque;
+package br.furb.rmi.estoque;
 
 import java.rmi.*;
 import java.util.ArrayList;
+
+import br.furb.common.Produto;
 
 public interface Estoque extends Remote {
    public String receberProduto(ArrayList<Produto> produto) throws RemoteException;

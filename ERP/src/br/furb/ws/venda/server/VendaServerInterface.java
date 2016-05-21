@@ -1,4 +1,4 @@
-package venda;
+package br.furb.ws.venda.server;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
