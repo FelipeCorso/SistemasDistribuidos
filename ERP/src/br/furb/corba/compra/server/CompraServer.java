@@ -17,18 +17,18 @@ public class CompraServer {
 			// Cria e inicializa o ORB
 			ORB orb = ORB.init(args, null);
 
-			// Cria a implementação e registra no ORB
+			// Cria a implementaÃ§Ã£o e registra no ORB
 			CompraImpl compras = new CompraImpl();
 
 			// Ativa o POA
 			POA rootpoa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
 			rootpoa.the_POAManager().activate();
 
-			// Pega a referência do servidor
+			// Pega a referÃªncia do servidor
 			org.omg.CORBA.Object ref = rootpoa.servant_to_reference(compras);
 			Compra href = CompraHelper.narrow(ref);
 
-			// Obtém uma referência para o servidor de nomes
+			// ObtÃªm uma referÃªncia para o servidor de nomes
 			org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
 			NamingContextExt namecontextRef = NamingContextExtHelper.narrow(objRef);
 

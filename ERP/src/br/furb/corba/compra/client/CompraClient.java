@@ -1,8 +1,13 @@
 package br.furb.corba.compra.client;
 
+import java.time.LocalTime;
+
 import org.omg.CORBA.ORB;
+import org.omg.CORBA.ORBPackage.InvalidName;
 import org.omg.CosNaming.NamingContextExt;
 import org.omg.CosNaming.NamingContextExtHelper;
+import org.omg.CosNaming.NamingContextPackage.CannotProceed;
+import org.omg.CosNaming.NamingContextPackage.NotFound;
 
 import br.furb.corba.compra.Compra;
 import br.furb.corba.compra.CompraHelper;
@@ -31,5 +36,35 @@ public class CompraClient {
 			System.out.println("ERROR : " + e);
 			e.printStackTrace(System.out);
 		}
+	}
+
+	public LocalTime getServerTime()
+			throws InvalidName, NotFound, CannotProceed, org.omg.CosNaming.NamingContextPackage.InvalidName {
+		// Cria e inicializa o ORB
+		ORB orb = ORB.init(new String[0], null);
+
+		// Obtem referencia para o servico de nomes
+		org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
+		NamingContextExt namecontextRef = NamingContextExtHelper.narrow(objRef);
+
+		// Obtem referencia para o servidor
+		String name = "Compras";
+		Compra compraServer = CompraHelper.narrow(namecontextRef.resolve_str(name));
+		return LocalTime.ofSecondOfDay(compraServer.getServerTime());
+	}
+
+	public void setServerTime(LocalTime corbaTime)
+			throws InvalidName, NotFound, CannotProceed, org.omg.CosNaming.NamingContextPackage.InvalidName {
+		// Cria e inicializa o ORB
+		ORB orb = ORB.init(new String[0], null);
+
+		// Obtem referencia para o servico de nomes
+		org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
+		NamingContextExt namecontextRef = NamingContextExtHelper.narrow(objRef);
+
+		// Obtem referencia para o servidor
+		String name = "Compras";
+		Compra compraServer = CompraHelper.narrow(namecontextRef.resolve_str(name));
+		compraServer.setServerTime(corbaTime.toSecondOfDay());
 	}
 }

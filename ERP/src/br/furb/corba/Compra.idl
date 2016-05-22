@@ -5,6 +5,9 @@ module br {
 				interface Compra {
 				    boolean recebeNota();
 				    boolean comunicaEstoque();
+				    void updateServerTime();
+				    long long getServerTime();
+				    void setServerTime(in long long localTime);
 				};
 			};
 		};
