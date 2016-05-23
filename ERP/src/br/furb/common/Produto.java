@@ -1,4 +1,4 @@
-package Estoque;
+package br.furb.common;
 
 import java.io.Serializable;
 

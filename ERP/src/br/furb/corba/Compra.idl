@@ -1,0 +1,15 @@
+module br {
+	module furb {
+		module corba {
+			module compra {
+				interface Compra {
+				    boolean recebeNota();
+				    boolean comunicaEstoque();
+				    void updateServerTime();
+				    long long getServerTime();
+				    void setServerTime(in long long localTime);
+				};
+			};
+		};
+	};
+};
