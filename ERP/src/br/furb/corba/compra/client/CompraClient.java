@@ -11,6 +11,8 @@ import org.omg.CosNaming.NamingContextPackage.NotFound;
 
 import br.furb.corba.compra.Compra;
 import br.furb.corba.compra.CompraHelper;
+import br.furb.corba.compra.InstanciaProtudo;
+import br.furb.corba.compra.Produto;
 
 public class CompraClient {
 
@@ -27,8 +29,12 @@ public class CompraClient {
 			String name = "Compras";
 			Compra moduloCompra = CompraHelper.narrow(namecontextRef.resolve_str(name));
 
-			moduloCompra.recebeNota();
-			moduloCompra.comunicaEstoque();
+			Produto produto = InstanciaProtudo.construtorProduto();
+			produto.setCodigoProduto(1);
+			produto.setDescricaoProduto("Toalha");
+			produto.setQtdProduto(5);
+			
+			moduloCompra.recebeNota(produto);			
 
 			System.out.println("Resultado: Compras Cliente Executado.");
 

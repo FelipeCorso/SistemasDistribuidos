@@ -5,21 +5,17 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.time.LocalTime;
 import java.util.ArrayList;
-
-import br.furb.common.Produto;
+import br.furb.corba.compra.Produto;
 
 public interface Estoque extends Remote {
-	public String receberProduto(ArrayList<Produto> produto) throws RemoteException;
+	String receberProduto(Produto umProduto) throws RemoteException;
 
-	public boolean produtoExiste(int codigoProduto) throws RemoteException;
+	String retirarProduto(Produto produtoRetornado) throws RemoteException;
 
-	// public void AdicionaProduto(Produto produto);
-	// public void IncrementaQtdProduto(Produto produto);
+	void updateServerTime() throws RemoteException;
 
-	public void updateServerTime();
+	LocalTime getServerTime() throws RemoteException;
 
-	public LocalTime getServerTime();
-
-	void setServerTime(LocalTime localTime);
+	void setServerTime(LocalTime localTime) throws RemoteException;
 
 }

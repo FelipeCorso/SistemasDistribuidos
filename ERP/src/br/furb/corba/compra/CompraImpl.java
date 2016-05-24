@@ -9,7 +9,6 @@ import org.omg.CORBA.ORBPackage.InvalidName;
 import org.omg.CosNaming.NamingContextPackage.CannotProceed;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
 
-import br.furb.common.Produto;
 import br.furb.common.UpdateServerTime;
 import br.furb.corba.compra.client.CompraClientEstoque;
 import br.furb.ui.UiServer;
@@ -18,25 +17,22 @@ public class CompraImpl extends CompraPOA {
 
 	private LocalTime serverTime = LocalTime.now();
 	private UiServer uiServer;
+	private CompraClientEstoque clientEstoque;
 
 	public CompraImpl() {
 		runUiServer();
+		clientEstoque = new CompraClientEstoque();
 	}
 
-	public boolean recebeNota() {
-		System.out.println("Compras recebeu nota fiscal de entrada");
-		return true;
-	};
+	  public boolean recebeNota (br.furb.corba.compra.Produto umProduto) {
+		  System.out.println("Compras recebeu nota fiscal de entrada");	  
+		  return comunicaEstoque(umProduto);
+	  };
 
-	public boolean comunicaEstoque() {
-		CompraClientEstoque clientEstoque = new CompraClientEstoque();
-		Produto produto = new Produto();
-		produto.setCodigoProduto(1);
-		produto.setDescricaoProduto("ServerCompras");
-		produto.setQtdProduto(2);
-		clientEstoque.solicitandoEstoque(produto);
-		return true;
-	}
+	  private boolean comunicaEstoque(br.furb.corba.compra.Produto umProduto) {  	  
+		  clientEstoque.solicitandoEstoque(umProduto);
+	  	  return true;
+	  }
 
 	@Override
 	public void updateServerTime() {

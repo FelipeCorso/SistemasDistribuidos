@@ -13,18 +13,21 @@ import org.omg.CORBA.ORBPackage.InvalidName;
 import org.omg.CosNaming.NamingContextPackage.CannotProceed;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
 
-import br.furb.common.Produto;
 import br.furb.common.UpdateServerTime;
+import br.furb.corba.compra.Produto;
 import br.furb.rmi.estoque.Estoque;
 import br.furb.ui.UiServer;
+import br.furb.rmi.estoque.ArquivoEstoque;
 
 public class EstoqueServer extends UnicastRemoteObject implements Estoque {
 
 	private LocalTime serverTime = LocalTime.now();
 	private UiServer uiServer;
+	private ArquivoEstoque controleEstoque;
 
 	public EstoqueServer() throws RemoteException {
 		runUiServer();
+		controleEstoque = new ArquivoEstoque();
 	}
 
 	// main()
@@ -36,38 +39,22 @@ public class EstoqueServer extends UnicastRemoteObject implements Estoque {
 			System.out.println("Exception: " + ex.getMessage());
 		}
 	}
-
-	public String receberProduto(ArrayList<Produto> produto) throws RemoteException {
-
-		for (Produto umProduto : produto) {
-			if (produtoExiste(umProduto.getCodigoProduto()))
-				IncrementaQtdProduto(umProduto);
-			else
-				AdicionaProduto(umProduto);
-		}
-		System.out.println("Executando receberProduto()");
-
-		return "Produto Adicionado no Estoque";
+	
+	public String receberProduto(Produto umProduto) throws RemoteException {
+		try {
+			controleEstoque.addProdutoEstoque(umProduto);
+			return "Produto recebido";
+		} catch (Exception e) {
+			return "Produto não recebido";
+		}				
 	}
 
-	public boolean produtoExiste(int codigoProduto) throws RemoteException {
-		System.out.println("Executando produtoExiste()");
-		// verifica se o produto já existe na base.
-		return true;
-	}
-
-	public void AdicionaProduto(Produto produto) {
-		System.out.println("Executando AdicionaProduto()");
-		// Cria um produto novo no estoque
-	}
-
-	public void IncrementaQtdProduto(Produto produto) {
-		System.out.println("Executando IncrementaQtdProduto()");
-		System.out.println(produto.getCodigoProduto());
-		System.out.println(produto.getDescricaoProduto());
-		System.out.println(produto.getQtdProduto());
-
-		// Incrementa a quantidade de um produto já existente.
+	public String retirarProduto(Produto produtoRetornado) throws RemoteException {		
+		produtoRetornado = controleEstoque.retiraProdutoEstoque(produtoRetornado);
+		if (produtoRetornado != null) {
+			return "Produto retirado com sucesso";
+		}else
+			return "não foi possível retirar o Produto"; 
 	}
 
 	@Override

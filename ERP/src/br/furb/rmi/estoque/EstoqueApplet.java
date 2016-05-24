@@ -4,7 +4,8 @@ import java.applet.Applet;
 import java.rmi.Naming;
 import java.util.ArrayList;
 
-import br.furb.common.Produto;
+import br.furb.corba.compra.InstanciaProtudo;
+import br.furb.corba.compra.Produto;
 
 public class EstoqueApplet extends Applet {
 
@@ -13,14 +14,13 @@ public class EstoqueApplet extends Applet {
 
 	public void init() {
 		try {
-			ArrayList<Produto> listaProduto = new ArrayList<Produto>();
-			Produto produto = new Produto();
+			Produto produto = InstanciaProtudo.construtorProduto();
 			produto.setCodigoProduto(1);
 			produto.setDescricaoProduto("teste");
 			produto.setQtdProduto(2);
 
 			obj = (Estoque) Naming.lookup("//localhost/Estoque");
-			message = obj.receberProduto(listaProduto);
+			message = obj.receberProduto(produto);
 		} catch (Exception e) {
 			System.out.println("EstoqueApplet exception: " + e.getMessage());
 		}
