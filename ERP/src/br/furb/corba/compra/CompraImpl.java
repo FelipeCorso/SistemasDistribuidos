@@ -9,6 +9,7 @@ import org.omg.CORBA.ORBPackage.InvalidName;
 import org.omg.CosNaming.NamingContextPackage.CannotProceed;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
 
+import br.furb.common.Produto;
 import br.furb.common.UpdateServerTime;
 import br.furb.corba.compra.client.CompraClientEstoque;
 import br.furb.ui.UiServer;
@@ -24,14 +25,24 @@ public class CompraImpl extends CompraPOA {
 		clientEstoque = new CompraClientEstoque();
 	}
 
-	  public boolean recebeNota (br.furb.corba.compra.Produto umProduto) {
-		  System.out.println("Compras recebeu nota fiscal de entrada");	  
-		  return comunicaEstoque(umProduto);
+	  public boolean recebeNota (int aCodigo, String aNome, int aQuantidade, double aValorUnitario) {
+		  uiServer.addServerLog("Compras recebeu nota fiscal de entrada");	  
+		  Produto produto = new Produto();
+		  produto.setCodigoProduto(aCodigo);
+		  produto.setDescricaoProduto(aNome);
+		  produto.setQtdProduto(aQuantidade);
+		  produto.setValorUnitario(aValorUnitario);
+		  return comunicaEstoque(produto);
 	  };
 
-	  private boolean comunicaEstoque(br.furb.corba.compra.Produto umProduto) {  	  
+	  private boolean comunicaEstoque(Produto umProduto) {
+		  uiServer.addServerLog("Servidor compras comunicando servidor estoque");
 		  clientEstoque.solicitandoEstoque(umProduto);
 	  	  return true;
+	  }
+	  
+	  public void adicionaLog(String log){
+		  uiServer.addServerLog(log);
 	  }
 
 	@Override

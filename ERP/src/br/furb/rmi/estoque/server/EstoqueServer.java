@@ -13,8 +13,8 @@ import org.omg.CORBA.ORBPackage.InvalidName;
 import org.omg.CosNaming.NamingContextPackage.CannotProceed;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
 
+import br.furb.common.Produto;
 import br.furb.common.UpdateServerTime;
-import br.furb.corba.compra.Produto;
 import br.furb.rmi.estoque.Estoque;
 import br.furb.ui.UiServer;
 import br.furb.rmi.estoque.ArquivoEstoque;
@@ -28,6 +28,7 @@ public class EstoqueServer extends UnicastRemoteObject implements Estoque {
 	public EstoqueServer() throws RemoteException {
 		runUiServer();
 		controleEstoque = new ArquivoEstoque();
+		uiServer.addServerLog("Servidor aguardando requisicoes ....");
 	}
 
 	// main()
@@ -42,6 +43,7 @@ public class EstoqueServer extends UnicastRemoteObject implements Estoque {
 	
 	public String receberProduto(Produto umProduto) throws RemoteException {
 		try {
+			uiServer.addServerLog("Servidor executando receberProduto()");
 			controleEstoque.addProdutoEstoque(umProduto);
 			return "Produto recebido";
 		} catch (Exception e) {
@@ -49,7 +51,8 @@ public class EstoqueServer extends UnicastRemoteObject implements Estoque {
 		}				
 	}
 
-	public String retirarProduto(Produto produtoRetornado) throws RemoteException {		
+	public String retirarProduto(Produto produtoRetornado) throws RemoteException {
+		uiServer.addServerLog("Servidor executando retirarProduto()");
 		produtoRetornado = controleEstoque.retiraProdutoEstoque(produtoRetornado);
 		if (produtoRetornado != null) {
 			return "Produto retirado com sucesso";

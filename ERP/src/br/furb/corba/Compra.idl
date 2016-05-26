@@ -2,20 +2,8 @@ module br {
 	module furb {	
 		module corba {
 			module compra {
-				interface Produto {
-					double getValorUnitario();
-					void setValorUnitario(in double valorUnitario);
-					long getCodigoProduto();
-					void setCodigoProduto(in long codigoProduto);
-					string getDescricaoProduto();
-					void setDescricaoProduto(in string descricaoProduto);
-					long getQtdProduto();		
-					void setQtdProduto(in long qtdProduto);	
-					string toString();		
-				};		
-			
 				interface Compra {
-				    boolean recebeNota(in Produto produto);
+				    boolean recebeNota(in long aCodigo, in string aNome, in long aQuantidade, in double aValorUnitario);
 				    void updateServerTime();
 				    long long getServerTime();
 				    void setServerTime(in long long localTime);

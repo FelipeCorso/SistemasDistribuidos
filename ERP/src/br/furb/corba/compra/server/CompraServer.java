@@ -37,7 +37,7 @@ public class CompraServer {
 			NameComponent path[] = namecontextRef.to_name(name);
 			namecontextRef.rebind(path, href);
 
-			System.out.println("Servidor aguardando requisicoes ....");
+			compras.adicionaLog("Servidor aguardando requisicoes ....");
 
 			// Aguarda chamadas dos clientes
 			orb.run();

@@ -12,8 +12,7 @@ import java.io.Serializable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import br.furb.corba.compra.InstanciaProtudo;
-import br.furb.corba.compra.Produto;
+import br.furb.common.Produto;
 import br.furb.rmi.estoque.client.EstoqueClientCompra;
 
 public class ArquivoEstoque implements Serializable {
@@ -48,15 +47,36 @@ public class ArquivoEstoque implements Serializable {
 	 * @param umProduto Produto Novo
 	 */
 	private void adicionaProdutoEstoque(Produto umProduto) {
-		Gson gson = new Gson();
-		String json = gson.toJson(umProduto);
-		FileWriter write;
+		String arquivoTmp = "ARQUIVO-tmp";
+
+		BufferedWriter writer;
+		BufferedReader reader;
 		try {
-			write = new FileWriter(arquivo);
-			write.write(json);
-			write.close();
-		} catch (IOException e) {
+			writer = new BufferedWriter(new FileWriter(arquivoTmp));
+			reader = new BufferedReader(new FileReader(arquivo));
+
+			Gson gson = new GsonBuilder().create();
+
+			String linha;
+			while ((linha = reader.readLine()) != null) {
+				Produto produtoArquivo = gson.fromJson(linha, Produto.class);
+				String json = gson.toJson(produtoArquivo);
+				writer.write(json);
+			}
+			
+			String json = gson.toJson(umProduto);
+			writer.write(json);
+
+			writer.close();
+			reader.close();
+
+			new File(arquivo).delete();
+			new File(arquivoTmp).renameTo(new File(arquivo));
+
+		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
 	}
 
@@ -124,7 +144,7 @@ public class ArquivoEstoque implements Serializable {
 				if (produtoArquivo.getCodigoProduto() == produto.getCodigoProduto()) {
 					if (produtoArquivo.getQtdProduto() > produto.getQtdProduto()) {
 						// se tiver produto suficiente, ent�o pode retorar o produto
-						newProduto = InstanciaProtudo.construtorProduto();
+						newProduto = new Produto();
 						newProduto.setCodigoProduto(produtoArquivo.getCodigoProduto());
 						newProduto.setDescricaoProduto(produtoArquivo.getDescricaoProduto());
 						newProduto.setQtdProduto(produto.getQtdProduto());

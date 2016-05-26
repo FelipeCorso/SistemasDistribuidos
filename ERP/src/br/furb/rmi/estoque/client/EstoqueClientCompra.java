@@ -4,9 +4,9 @@ import org.omg.CORBA.ORB;
 import org.omg.CosNaming.NamingContextExt;
 import org.omg.CosNaming.NamingContextExtHelper;
 
+import br.furb.common.Produto;
 import br.furb.corba.compra.Compra;
 import br.furb.corba.compra.CompraHelper;
-import br.furb.corba.compra.Produto;
 
 
 
@@ -26,7 +26,7 @@ public class EstoqueClientCompra {
 			String name = "Compras";
 			Compra moduloCompra = CompraHelper.narrow(namecontextRef.resolve_str(name));
 
-		//	moduloCompra.recebeNota(produto);
+			moduloCompra.recebeNota(produto.getCodigoProduto(), produto.getDescricaoProduto(),produto.getQtdProduto(),produto.getValorUnitario());
 
 			System.out.println("Resultado: Compras Cliente Executado.");
 

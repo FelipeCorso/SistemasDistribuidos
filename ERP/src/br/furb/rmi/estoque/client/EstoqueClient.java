@@ -8,18 +8,17 @@ import java.rmi.RemoteException;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
-import br.furb.corba.compra.Produto;
+import br.furb.common.Produto;
 import br.furb.rmi.estoque.Estoque;
 
 public class EstoqueClient {
 	public static void main(String[] args) {
 		try {
-			Produto produto = null;;
+			Produto produto = new Produto();
             produto.setCodigoProduto(1);
             produto.setQtdProduto(11);
 			Estoque obj = (Estoque) Naming.lookup("//localhost/Estoque");			
 			System.out.println("Mensagem do Servidor: " + obj.retirarProduto(produto));
-			System.out.println("TEste");
 		} catch (Exception ex) {
 			System.out.println("Exception: " + ex.getMessage());
 		}

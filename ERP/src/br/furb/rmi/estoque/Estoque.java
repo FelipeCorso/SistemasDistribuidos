@@ -5,7 +5,8 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import br.furb.corba.compra.Produto;
+
+import br.furb.common.Produto;
 
 public interface Estoque extends Remote {
 	String receberProduto(Produto umProduto) throws RemoteException;

@@ -4,8 +4,7 @@ import java.applet.Applet;
 import java.rmi.Naming;
 import java.util.ArrayList;
 
-import br.furb.corba.compra.InstanciaProtudo;
-import br.furb.corba.compra.Produto;
+import br.furb.common.Produto;
 
 public class EstoqueApplet extends Applet {
 
@@ -14,7 +13,7 @@ public class EstoqueApplet extends Applet {
 
 	public void init() {
 		try {
-			Produto produto = InstanciaProtudo.construtorProduto();
+			Produto produto = new Produto();
 			produto.setCodigoProduto(1);
 			produto.setDescricaoProduto("teste");
 			produto.setQtdProduto(2);

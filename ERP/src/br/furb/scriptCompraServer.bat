@@ -1,6 +1,6 @@
 echo off
 cls
-echo "SCRIPT .BAT para levantar o servidor EstoqueCorba"
+echo "SCRIPT .BAT para levantar o servidor Compras Corba"
 
 REM deve colocar o diretorio que se encontra os .class
 SET DIRETORIO="C:\Git\SistemasDistribuidos\ERP\src\"
