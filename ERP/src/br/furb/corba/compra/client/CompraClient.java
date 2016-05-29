@@ -12,6 +12,7 @@ import org.omg.CosNaming.NamingContextPackage.NotFound;
 import br.furb.common.Produto;
 import br.furb.corba.compra.Compra;
 import br.furb.corba.compra.CompraHelper;
+import br.furb.ws.leaderelection.Server;
 
 public class CompraClient {
 
@@ -32,8 +33,9 @@ public class CompraClient {
 			produto.setCodigoProduto(1);
 			produto.setDescricaoProduto("Toalha");
 			produto.setQtdProduto(5);
-			
-			moduloCompra.recebeNota(produto.getCodigoProduto(),produto.getDescricaoProduto(),produto.getQtdProduto(),produto.getValorUnitario());			
+
+			moduloCompra.recebeNota(produto.getCodigoProduto(), produto.getDescricaoProduto(), produto.getQtdProduto(),
+					produto.getValorUnitario());
 
 			System.out.println("Resultado: Compras Cliente Executado.");
 
@@ -71,5 +73,21 @@ public class CompraClient {
 		String name = "Compras";
 		Compra compraServer = CompraHelper.narrow(namecontextRef.resolve_str(name));
 		compraServer.setServerTime(corbaTime.toSecondOfDay());
+	}
+
+	public int getServerStatus(Server server)
+			throws InvalidName, NotFound, CannotProceed, org.omg.CosNaming.NamingContextPackage.InvalidName {
+		// Cria e inicializa o ORB
+		ORB orb = ORB.init(new String[0], null);
+
+		// Obtem referencia para o servico de nomes
+		org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
+		NamingContextExt namecontextRef = NamingContextExtHelper.narrow(objRef);
+
+		// Obtem referencia para o servidor
+		String name = "Compras";
+		Compra compraServer = CompraHelper.narrow(namecontextRef.resolve_str(name));
+		// TODO
+		return 0;
 	}
 }

@@ -1,27 +1,39 @@
 package br.furb.ws.venda.server;
 
 import java.net.MalformedURLException;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
 import java.time.LocalTime;
 
 import javax.jws.WebService;
 
-import org.omg.CORBA.ORBPackage.InvalidName;
-import org.omg.CosNaming.NamingContextPackage.CannotProceed;
-import org.omg.CosNaming.NamingContextPackage.NotFound;
-
 import br.furb.common.UpdateServerTime;
 import br.furb.ui.UiServer;
+import br.furb.ws.leaderelection.Server;
+import br.furb.ws.leaderelection.bully.BullyAlgorithm;
+import br.furb.ws.leaderelection.bully.client.BullyClient;
 
 @WebService(endpointInterface = "br.furb.ws.venda.server.VendaServerInterface")
 public class VendaServerImpl implements VendaServerInterface {
 
 	private LocalTime serverTime = LocalTime.now();
 	private UiServer uiServer;
+	private Server server; // O próprio servidor
 
-	public VendaServerImpl() {
+	public VendaServerImpl(Server server) {
+		this.server = server;
 		runUiServer();
+		checkIfLeaderIsAlive();
+	}
+
+	private void checkIfLeaderIsAlive() {
+		while (true) {
+			try {
+				Thread.sleep(5000);
+				BullyAlgorithm bullyAlgorithm = new BullyAlgorithm();
+				bullyAlgorithm.checkIfLeaderIsAlive(getServer());
+			} catch (InterruptedException | MalformedURLException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	private boolean comunicarFinancaVenda() {
@@ -35,12 +47,20 @@ public class VendaServerImpl implements VendaServerInterface {
 
 	@Override
 	public void updateServerTime() {
-		try {
-			UpdateServerTime.update(uiServer);
-		} catch (MalformedURLException | InvalidName | NotFound | CannotProceed
-				| org.omg.CosNaming.NamingContextPackage.InvalidName | RemoteException | NotBoundException e) {
-			e.printStackTrace();
+
+		while (true) {
+			try {
+				Thread.sleep(5000);
+				BullyClient bullyClient = new BullyClient();
+				Server leader = bullyClient.getLeader();
+				if (this.getServer().equals(leader)) {
+					UpdateServerTime.update(uiServer);
+				}
+			} catch (InterruptedException | MalformedURLException e) {
+				e.printStackTrace();
+			}
 		}
+
 	}
 
 	@Override
@@ -57,6 +77,29 @@ public class VendaServerImpl implements VendaServerInterface {
 	public void runUiServer() {
 		uiServer = new UiServer(serverTime);
 		uiServer.setVisible(true);
+	}
+
+	@Override
+	public UiServer getUiServer() {
+		return uiServer;
+	}
+
+	// @Override
+	// public Server getLeader() {
+	// return leader;
+	// }
+	//
+	// @Override
+	// public void setLeader(Server leader) {
+	// this.leader = leader;
+	// }
+
+	public Server getServer() {
+		return server;
+	}
+
+	public void setServer(Server server) {
+		this.server = server;
 	}
 
 }

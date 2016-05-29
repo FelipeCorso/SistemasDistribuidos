@@ -6,18 +6,18 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.time.LocalTime;
-import java.util.ArrayList;
 
 import br.furb.common.Produto;
 import br.furb.rmi.estoque.Estoque;
+import br.furb.ws.leaderelection.Server;
 
 public class EstoqueClient {
 	public static void main(String[] args) {
 		try {
 			Produto produto = new Produto();
-            produto.setCodigoProduto(1);
-            produto.setQtdProduto(11);
-			Estoque obj = (Estoque) Naming.lookup("//localhost/Estoque");			
+			produto.setCodigoProduto(1);
+			produto.setQtdProduto(11);
+			Estoque obj = (Estoque) Naming.lookup("//localhost/Estoque");
 			System.out.println("Mensagem do Servidor: " + obj.retirarProduto(produto));
 		} catch (Exception ex) {
 			System.out.println("Exception: " + ex.getMessage());
@@ -32,5 +32,10 @@ public class EstoqueClient {
 	public void setServerTime(LocalTime rmiTime) throws MalformedURLException, RemoteException, NotBoundException {
 		Estoque estoqueServer = (Estoque) Naming.lookup("//localhost/Estoque");
 		estoqueServer.setServerTime(rmiTime);
+	}
+
+	public int getServerStatus(Server leader) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }
