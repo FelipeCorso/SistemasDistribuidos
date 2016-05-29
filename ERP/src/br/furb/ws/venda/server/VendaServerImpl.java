@@ -5,7 +5,14 @@ import java.time.LocalTime;
 
 import javax.jws.WebService;
 
+import org.omg.CORBA.ORBPackage.InvalidName;
+import org.omg.CosNaming.NamingContextPackage.CannotProceed;
+import org.omg.CosNaming.NamingContextPackage.NotFound;
+
+import br.furb.common.Produto;
 import br.furb.common.UpdateServerTime;
+import br.furb.rmi.estoque.Estoque;
+import br.furb.rmi.estoque.client.ClientEstoque;
 import br.furb.ui.UiServer;
 import br.furb.ws.leaderelection.Server;
 import br.furb.ws.leaderelection.bully.BullyAlgorithm;
@@ -21,6 +28,7 @@ public class VendaServerImpl implements VendaServerInterface {
 	public VendaServerImpl(Server server) {
 		this.server = server;
 		runUiServer();
+		uiServer.addServerLog("Servidor aguardando requisicoes ....");
 		checkIfLeaderIsAlive();
 	}
 
@@ -40,8 +48,18 @@ public class VendaServerImpl implements VendaServerInterface {
 		return true;// aqui ficará a integração do Vendas com o financeiro.
 	}
 
-	public boolean efetuarVendaProduto() {
-		comunicarFinancaVenda();
+	public boolean efetuarVendaProduto(Produto produto) {
+		try {
+			uiServer.addServerLog("executando efetuarVendaProduto()");
+			ClientEstoque estoqueClient = new ClientEstoque();
+			Estoque estoque = estoqueClient.retornaComunicacaoServer();
+			
+			uiServer.addServerLog("comunicando Estoque server");
+			uiServer.addServerLog("Estoque server retorno: " + estoque.retirarProduto(produto));			
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return true;
 	}
 
@@ -77,6 +95,7 @@ public class VendaServerImpl implements VendaServerInterface {
 	public void runUiServer() {
 		uiServer = new UiServer(serverTime);
 		uiServer.setVisible(true);
+		uiServer.NomeServidor("Server Vendas");
 	}
 
 	@Override

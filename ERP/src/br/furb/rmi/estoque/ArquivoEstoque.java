@@ -7,12 +7,17 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonReader;
 
 import br.furb.common.Produto;
+import br.furb.corba.compra.Compra;
+import br.furb.corba.compra.client.CompraClient;
 import br.furb.rmi.estoque.client.EstoqueClientCompra;
 
 public class ArquivoEstoque implements Serializable {
@@ -20,6 +25,7 @@ public class ArquivoEstoque implements Serializable {
 
 	/**
 	 * Verifica se o produto existe dentro do estoque.
+	 * 
 	 * @param codigoProduto
 	 * @return
 	 */
@@ -27,8 +33,10 @@ public class ArquivoEstoque implements Serializable {
 		Gson gson = new GsonBuilder().create();
 		try {
 			BufferedReader bufArquivo = new BufferedReader(new FileReader(arquivo));
-			if (bufArquivo.ready()) {
-				Produto produtoArquivo = gson.fromJson(bufArquivo.readLine(), Produto.class);
+			String linha;
+			while ((linha = bufArquivo.readLine())!= null){
+				
+				Produto produtoArquivo = gson.fromJson(linha, Produto.class);
 				if (produtoArquivo.getCodigoProduto() == codigoProduto) {
 					bufArquivo.close();
 					return true;
@@ -44,34 +52,43 @@ public class ArquivoEstoque implements Serializable {
 
 	/**
 	 * Adiciona um novo produto no arquivo de Estoque
-	 * @param umProduto Produto Novo
+	 * 
+	 * @param umProduto
+	 *            Produto Novo
+	 * @throws IOException 
 	 */
-	private void adicionaProdutoEstoque(Produto umProduto) {
-		String arquivoTmp = "ARQUIVO-tmp";
+	private void adicionaProdutoEstoque(Produto umProduto) throws IOException {
+		String nomeArquivoTmp = "ARQUIVO-tmp";
 
+		File arquivoEstoque = new File(arquivo);
+		File arquivoTmp = new File(nomeArquivoTmp);
+		
+		FileReader arqEstoReader = new FileReader(arquivo);
+		FileWriter arqTmpWrite = new FileWriter(arquivoTmp);
 		BufferedWriter writer;
 		BufferedReader reader;
 		try {
-			writer = new BufferedWriter(new FileWriter(arquivoTmp));
-			reader = new BufferedReader(new FileReader(arquivo));
+			writer = new BufferedWriter(arqTmpWrite);
+			reader = new BufferedReader(arqEstoReader);
 
 			Gson gson = new GsonBuilder().create();
 
 			String linha;
 			while ((linha = reader.readLine()) != null) {
 				Produto produtoArquivo = gson.fromJson(linha, Produto.class);
-				String json = gson.toJson(produtoArquivo);
+				String json = gson.toJson(produtoArquivo, Produto.class);
 				writer.write(json);
+				writer.newLine();
 			}
-			
-			String json = gson.toJson(umProduto);
-			writer.write(json);
 
+			String json = gson.toJson(umProduto, Produto.class);
+			writer.write(json);
+			
 			writer.close();
 			reader.close();
-
-			new File(arquivo).delete();
-			new File(arquivoTmp).renameTo(new File(arquivo));
+			
+			arquivoEstoque.delete();
+			arquivoTmp.renameTo(arquivoEstoque);			
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -82,16 +99,26 @@ public class ArquivoEstoque implements Serializable {
 
 	/**
 	 * Le o arquivo de estoque e adiciona o produto no estoque
-	 * @param umProduto Produto que deve ser incrementado.
+	 * 
+	 * @param umProduto
+	 *            Produto que deve ser incrementado.
 	 */
 	private void incrementaQtdProdutoEstoque(Produto umProduto) {
-		String arquivoTmp = "ARQUIVO-tmp";
+		String nomeArquivoTmp = "ARQUIVO-tmp";
 
-		BufferedWriter writer;
-		BufferedReader reader;
+		File arquivoEstoque = new File(arquivo);
+		File arquivoTmp = new File(nomeArquivoTmp);
+
+		FileReader arqEstoReader;
 		try {
-			writer = new BufferedWriter(new FileWriter(arquivoTmp));
-			reader = new BufferedReader(new FileReader(arquivo));
+			arqEstoReader = new FileReader(arquivoEstoque);
+			FileWriter arqTmpWrite = new FileWriter(arquivoTmp);
+
+			BufferedWriter writer;
+			BufferedReader reader;
+
+			writer = new BufferedWriter(arqTmpWrite);
+			reader = new BufferedReader(arqEstoReader);
 
 			Gson gson = new GsonBuilder().create();
 
@@ -101,15 +128,19 @@ public class ArquivoEstoque implements Serializable {
 				if (produtoArquivo.getCodigoProduto() == umProduto.getCodigoProduto()) {
 					produtoArquivo.setQtdProduto(produtoArquivo.getQtdProduto() + umProduto.getQtdProduto());
 				}
-				String json = gson.toJson(produtoArquivo);
+				String json = gson.toJson(produtoArquivo, Produto.class);
 				writer.write(json);
+				writer.newLine();
 			}
 
 			writer.close();
 			reader.close();
 
-			new File(arquivo).delete();
-			new File(arquivoTmp).renameTo(new File(arquivo));
+			writer.close();
+			reader.close();
+
+			arquivoEstoque.delete();
+			arquivoTmp.renameTo(arquivoEstoque);
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -120,20 +151,31 @@ public class ArquivoEstoque implements Serializable {
 
 	/**
 	 * Metodo vai ate o arquivo que contem os produtos e retiva uma quantidade x
-	 * do produto no estoque, caso essa quantidade zera o estoque, ent�o � solicitado 
-	 * para o server de compras comprar mais produtos.
-	 * @param produto: Deve conter o codigo e a quantidade desejada.
+	 * do produto no estoque, caso essa quantidade zera o estoque, ent�o �
+	 * solicitado para o server de compras comprar mais produtos.
+	 * 
+	 * @param produto:
+	 *            Deve conter o codigo e a quantidade desejada.
 	 * @return Retorna o produto completo com a quantidade desejada.
 	 */
-	
-	private Produto retiraProdutoEstoqueInterno(Produto produto) {
-		String arquivoTmp = "ARQUIVO-tmp";
 
-		BufferedWriter writer;
-		BufferedReader reader;
+	private Produto retiraProdutoEstoqueInterno(Produto produto) {
+		String nomeArquivoTmp = "ARQUIVO-tmp";
+
+		File arquivoEstoque = new File(arquivo);
+		File arquivoTmp = new File(nomeArquivoTmp);
+
+		FileReader arqEstoReader;
 		try {
-			writer = new BufferedWriter(new FileWriter(arquivoTmp));
-			reader = new BufferedReader(new FileReader(arquivo));
+			arqEstoReader = new FileReader(arquivoEstoque);
+			FileWriter arqTmpWrite;
+			arqTmpWrite = new FileWriter(arquivoTmp);
+
+			BufferedWriter writer;
+			BufferedReader reader;
+
+			writer = new BufferedWriter(arqTmpWrite);
+			reader = new BufferedReader(arqEstoReader);
 
 			Gson gson = new GsonBuilder().create();
 			Produto newProduto = null;
@@ -143,7 +185,8 @@ public class ArquivoEstoque implements Serializable {
 				Produto produtoArquivo = gson.fromJson(linha, Produto.class);
 				if (produtoArquivo.getCodigoProduto() == produto.getCodigoProduto()) {
 					if (produtoArquivo.getQtdProduto() > produto.getQtdProduto()) {
-						// se tiver produto suficiente, ent�o pode retorar o produto
+						// se tiver produto suficiente, ent�o pode retorar o
+						// produto
 						newProduto = new Produto();
 						newProduto.setCodigoProduto(produtoArquivo.getCodigoProduto());
 						newProduto.setDescricaoProduto(produtoArquivo.getDescricaoProduto());
@@ -151,20 +194,18 @@ public class ArquivoEstoque implements Serializable {
 						newProduto.setValorUnitario(produtoArquivo.getValorUnitario());
 
 						produtoArquivo.setQtdProduto(produtoArquivo.getQtdProduto() - produto.getQtdProduto());
-					}else{
-                      EstoqueClientCompra clientCompra = new EstoqueClientCompra();
-                      clientCompra.cominicarCompra(produtoArquivo);
 					}
 				}
-				String json = gson.toJson(produtoArquivo);
+				String json = gson.toJson(produtoArquivo, Produto.class);
 				writer.write(json);
+				writer.newLine();
 			}
 
 			writer.close();
 			reader.close();
 
-			new File(arquivo).delete();
-			new File(arquivoTmp).renameTo(new File(arquivo));
+			arquivoEstoque.delete();
+			arquivoTmp.renameTo(arquivoEstoque);
 
 			return newProduto;
 
@@ -176,11 +217,35 @@ public class ArquivoEstoque implements Serializable {
 		return null;
 	}
 
+	public ArrayList<Produto> retornarProdutoArquivo() {
+		ArrayList<Produto> listaProduto = new ArrayList<Produto>();
+
+		Gson gson = new GsonBuilder().create();
+		try {
+			BufferedReader bufArquivo = new BufferedReader(new FileReader(arquivo));
+			String linha;
+			while ((linha = bufArquivo.readLine()) != null) {
+			//while (linha != null) {				
+				Produto produtoArquivo = gson.fromJson(linha, Produto.class);
+				listaProduto.add(produtoArquivo);
+			}
+			bufArquivo.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return listaProduto;
+	}
+
 	/**
 	 * Metodo adiciona mais produtos no Estoque(Adiciona/Incrementa)
-	 * @param umProduto Produto que deseja adicionar
+	 * 
+	 * @param umProduto
+	 *            Produto que deseja adicionar
+	 * @throws IOException 
 	 */
-	public void addProdutoEstoque(Produto umProduto) {
+	public void addProdutoEstoque(Produto umProduto) throws IOException {
 		if (produtoExisteEstoque(umProduto.getCodigoProduto())) {
 			incrementaQtdProdutoEstoque(umProduto);
 		} else {
@@ -191,7 +256,9 @@ public class ArquivoEstoque implements Serializable {
 
 	/**
 	 * Retira o produto do estoque(decrementa a quantidade)
-	 * @param produto Deve conter o codigo e a quantidade do produto
+	 * 
+	 * @param produto
+	 *            Deve conter o codigo e a quantidade do produto
 	 * @return Retorna o produto caso haja no estoque.
 	 */
 	public Produto retiraProdutoEstoque(Produto produto) {

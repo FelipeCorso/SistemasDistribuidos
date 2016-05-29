@@ -116,4 +116,8 @@ public class UiServer extends JFrame {
 			System.out.println(e);
 		}
 	}
+	
+	public void NomeServidor(String nome){
+		this.setTitle(nome);
+	}
 }

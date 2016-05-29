@@ -44,6 +44,27 @@ public class CompraClient {
 			e.printStackTrace(System.out);
 		}
 	}
+	
+	public static Compra retornaClientCompras(String args[]) {
+		try {
+			// Cria e inicializa o ORB
+			ORB orb = ORB.init(args,null);
+
+			// Obtem referencia para o servico de nomes
+			org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
+			NamingContextExt namecontextRef = NamingContextExtHelper.narrow(objRef);
+
+			// Obtem referencia para o servidor
+			String name = "Compras";
+			Compra moduloCompra = CompraHelper.narrow(namecontextRef.resolve_str(name));
+			return moduloCompra;
+
+		} catch (Exception e) {
+			System.out.println("ERROR : " + e);
+			e.printStackTrace(System.out);
+		}
+		return null;
+	}
 
 	public LocalTime getServerTime()
 			throws InvalidName, NotFound, CannotProceed, org.omg.CosNaming.NamingContextPackage.InvalidName {

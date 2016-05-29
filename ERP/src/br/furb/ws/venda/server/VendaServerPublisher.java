@@ -14,7 +14,7 @@ public class VendaServerPublisher {
 		try {
 			Server server = new Server("127.0.0.1", 9876, TypeServer.WS);
 			VendaServerInterface vendaServer = new VendaServerImpl(server);
-			Endpoint.publish("http://" + server.getIp() + ":" + server.getPort() + "/venda", vendaServer);
+			Endpoint.publish("http://" + server.getIp() + ":" + server.getPort() + "/br.furb.ws.venda.server", vendaServer);
 			vendaServer.getUiServer().addServerLog("Servidor Vendas no Ar!!!");
 
 			BullyClient bullyClient = new BullyClient();
