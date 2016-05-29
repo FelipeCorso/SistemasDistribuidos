@@ -8,6 +8,18 @@ public class Produto implements Serializable{
 	private String descricaoProduto;
 	private int qtdProduto;
 	private double valorUnitario;
+	
+	public Produto(Produto umProduto){
+		setCodigoProduto(umProduto.getCodigoProduto());
+		setDescricaoProduto(umProduto.getDescricaoProduto());
+		setQtdProduto(umProduto.getQtdProduto());
+		setValorUnitario(umProduto.getValorUnitario());
+	}
+	
+	public Produto(){
+		
+	}
+	
 	public double getValorUnitario() {
 		return valorUnitario;
 	}
@@ -41,10 +53,10 @@ public class Produto implements Serializable{
 	
 	@Override
 	public String toString() {	
-		return "Codigo: " + codigoProduto + "\n" +
-				"Descri��o: " + descricaoProduto + "\n" +
-				"Qtd: " + qtdProduto + "\n" +
-				"Valor: " + valorUnitario + "\n";
+		return "Codigo: " + codigoProduto + "; " +
+				"Descrição: " + descricaoProduto + "; " +
+				"Qtd: " + qtdProduto + "; " +
+				"Valor: " + valorUnitario + "; ";
 	}
 	
 }

@@ -11,22 +11,23 @@ import org.omg.CosNaming.NamingContextPackage.NotFound;
 
 import br.furb.common.Produto;
 import br.furb.common.UpdateServerTime;
-import br.furb.corba.compra.client.CompraClientEstoque;
+import br.furb.rmi.estoque.Estoque;
+import br.furb.rmi.estoque.client.ClientEstoque;
 import br.furb.ui.UiServer;
 
 public class CompraImpl extends CompraPOA {
 
 	private LocalTime serverTime = LocalTime.now();
 	private UiServer uiServer;
-	private CompraClientEstoque clientEstoque;
+	private ClientEstoque clientEstoque;
 
 	public CompraImpl() {
 		runUiServer();
-		clientEstoque = new CompraClientEstoque();
+		clientEstoque = new ClientEstoque();
 	}
 
 	  public boolean recebeNota (int aCodigo, String aNome, int aQuantidade, double aValorUnitario) {
-		  uiServer.addServerLog("Compras recebeu nota fiscal de entrada");	  
+		  adicionaLog("Compras recebeu nota fiscal de entrada");	  
 		  Produto produto = new Produto();
 		  produto.setCodigoProduto(aCodigo);
 		  produto.setDescricaoProduto(aNome);
@@ -35,11 +36,17 @@ public class CompraImpl extends CompraPOA {
 		  return comunicaEstoque(produto);
 	  };
 
-	  private boolean comunicaEstoque(Produto umProduto) {
-		  uiServer.addServerLog("Servidor compras comunicando servidor estoque");
-		  clientEstoque.solicitandoEstoque(umProduto);
-	  	  return true;
-	  }
+	private boolean comunicaEstoque(Produto umProduto) {
+		try {
+			adicionaLog("Servidor compras comunicando servidor estoque");
+			Estoque estoque = clientEstoque.retornaComunicacaoServer();
+			adicionaLog("Retorno Estoque: " + estoque.receberProduto(umProduto));
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return true;
+	}
 	  
 	  public void adicionaLog(String log){
 		  uiServer.addServerLog(log);
@@ -69,6 +76,7 @@ public class CompraImpl extends CompraPOA {
 	public void runUiServer() {
 		uiServer = new UiServer(serverTime);
 		uiServer.setVisible(true);
+		uiServer.NomeServidor("Server Compras");
 	}
 
 }

@@ -12,6 +12,8 @@ public interface Estoque extends Remote {
 	String receberProduto(Produto umProduto) throws RemoteException;
 
 	String retirarProduto(Produto produtoRetornado) throws RemoteException;
+	
+	ArrayList<Produto> retornarProdutos() throws RemoteException;
 
 	void updateServerTime() throws RemoteException;
 

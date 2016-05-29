@@ -7,12 +7,14 @@ import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.Style;
 
+import br.furb.common.Produto;
+
 @WebService
 @SOAPBinding(style = Style.RPC)
 public interface VendaServerInterface {
 
 	@WebMethod
-	boolean efetuarVendaProduto();
+	boolean efetuarVendaProduto(Produto produto);
 
 	@WebMethod
 	public void updateServerTime();

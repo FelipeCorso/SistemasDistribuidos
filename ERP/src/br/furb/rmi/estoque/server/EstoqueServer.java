@@ -15,6 +15,8 @@ import org.omg.CosNaming.NamingContextPackage.NotFound;
 
 import br.furb.common.Produto;
 import br.furb.common.UpdateServerTime;
+import br.furb.corba.compra.Compra;
+import br.furb.corba.compra.client.CompraClient;
 import br.furb.rmi.estoque.Estoque;
 import br.furb.ui.UiServer;
 import br.furb.rmi.estoque.ArquivoEstoque;
@@ -24,6 +26,7 @@ public class EstoqueServer extends UnicastRemoteObject implements Estoque {
 	private LocalTime serverTime = LocalTime.now();
 	private UiServer uiServer;
 	private ArquivoEstoque controleEstoque;
+	private int qtdCompraProduto = 2;
 
 	public EstoqueServer() throws RemoteException {
 		runUiServer();
@@ -53,12 +56,40 @@ public class EstoqueServer extends UnicastRemoteObject implements Estoque {
 
 	public String retirarProduto(Produto produtoRetornado) throws RemoteException {
 		uiServer.addServerLog("Servidor executando retirarProduto()");
-		produtoRetornado = controleEstoque.retiraProdutoEstoque(produtoRetornado);
-		if (produtoRetornado != null) {
-			return "Produto retirado com sucesso";
-		}else
-			return "não foi possível retirar o Produto"; 
+		Produto produtoBackup = new Produto(produtoRetornado);
+		
+		String retorno = retirarProdutoInterno(produtoRetornado);
+		if (retorno == "Produto retirado com sucesso") {
+			return retorno;
+		}else{
+			return solicitaCompraProduto(produtoBackup);
+	    }  
 	}
+	
+	private String retirarProdutoInterno(Produto umProduto){
+		umProduto = controleEstoque.retiraProdutoEstoque(umProduto);
+		if (umProduto != null) {
+			return "Produto retirado com sucesso";
+		}else{
+			umProduto = null;
+			return "Não foi possível retirar o Produto";
+		}	
+	}
+	
+	public ArrayList<Produto> retornarProdutos(){
+		return controleEstoque.retornarProdutoArquivo();
+	}
+	
+	private String solicitaCompraProduto(Produto umProduto) throws RemoteException  {
+		CompraClient clientCompra = new CompraClient();
+		String[] args = new String[2];
+		Compra compra = clientCompra.retornaClientCompras(args);
+		compra.recebeNota(umProduto.getCodigoProduto(), umProduto.getDescricaoProduto(),
+				umProduto.getQtdProduto() * qtdCompraProduto, umProduto.getValorUnitario());
+		
+		return retirarProdutoInterno(umProduto);
+	}
+	
 
 	@Override
 	public void updateServerTime() {
@@ -84,5 +115,6 @@ public class EstoqueServer extends UnicastRemoteObject implements Estoque {
 	public void runUiServer() {
 		uiServer = new UiServer(serverTime);
 		uiServer.setVisible(true);
+		uiServer.NomeServidor("Server Estoque");
 	}
 }
