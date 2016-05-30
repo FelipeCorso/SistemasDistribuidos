@@ -22,6 +22,7 @@ public interface VendaServerInterface {
 
     @WebMethod
     public LocalTime getServerTime();
+<<<<<<< HEAD
 
     @WebMethod
     public void setServerTime(LocalTime localTime);
@@ -34,4 +35,9 @@ public interface VendaServerInterface {
 
     void checkIfLeaderIsAlive();
 
+=======
+
+    @WebMethod
+    public void setServerTime(LocalTime localTime);
+>>>>>>> master
 }
