@@ -11,42 +11,42 @@ import br.furb.ws.venda.server.VendaServerInterface;
 
 public class VendaClient {
 
-	public static void main(String args[]) throws Exception {
-		URL url = new URL("http://localhost/br.furb.ws.venda.server?wsdl");
-		QName qname = new QName("http://server.venda.ws.furb.br/", "VendaServerImplService");
-		Service ws = Service.create(url, qname);
-		VendaServerInterface venda = ws.getPort(VendaServerInterface.class);
+    public static void main(String args[]) throws Exception {
+        URL url = new URL("http://localhost/br.furb.ws.venda.server?wsdl");
+        QName qname = new QName("http://server.venda.ws.furb.br/", "VendaServerImplService");
+        Service ws = Service.create(url, qname);
+        VendaServerInterface venda = ws.getPort(VendaServerInterface.class);
         // venda.efetuarVendaProduto();
 
-	}
-	
-	public static VendaServerInterface retornaClientVendas(){
-		URL url;
-		try {
-			url = new URL("http://localhost/br.furb.ws.venda.server?wsdl");
-			QName qname = new QName("http://server.venda.ws.furb.br/", "VendaServerImplService");
-			Service ws = Service.create(url, qname);
-			VendaServerInterface venda = ws.getPort(VendaServerInterface.class);
-			return venda;			
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+    }
 
-	public LocalTime getServerTime() throws MalformedURLException {
-		URL url = new URL("http://localhost/br.furb.ws.venda.server?wsdl");
-		QName qname = new QName("http://server.venda.ws.furb.br/", "VendaServerImplService");
-		Service ws = Service.create(url, qname);
-		VendaServerInterface vendaServer = ws.getPort(VendaServerInterface.class);
-		return vendaServer.getServerTime();
-	}
+    public static VendaServerInterface retornaClientVendas() {
+        URL url;
+        try {
+            url = new URL("http://localhost/br.furb.ws.venda.server?wsdl");
+            QName qname = new QName("http://server.venda.ws.furb.br/", "VendaServerImplService");
+            Service ws = Service.create(url, qname);
+            VendaServerInterface venda = ws.getPort(VendaServerInterface.class);
+            return venda;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
-	public void setServerTime(LocalTime wsTime) throws MalformedURLException {
-		URL url = new URL("http://localhost/br.furb.ws.venda.server?wsdl");
-		QName qname = new QName("http://server.venda.ws.furb.br/", "VendaServerImplService");
-		Service ws = Service.create(url, qname);
-		VendaServerInterface vendaServer = ws.getPort(VendaServerInterface.class);
-		vendaServer.setServerTime(wsTime);
-	}
+    public LocalTime getServerTime() throws MalformedURLException {
+        URL url = new URL("http://localhost/br.furb.ws.venda.server?wsdl");
+        QName qname = new QName("http://server.venda.ws.furb.br/", "VendaServerImplService");
+        Service ws = Service.create(url, qname);
+        VendaServerInterface vendaServer = ws.getPort(VendaServerInterface.class);
+        return vendaServer.getServerTime();
+    }
+
+    public void setServerTime(LocalTime wsTime) throws MalformedURLException {
+        URL url = new URL("http://localhost/br.furb.ws.venda.server?wsdl");
+        QName qname = new QName("http://server.venda.ws.furb.br/", "VendaServerImplService");
+        Service ws = Service.create(url, qname);
+        VendaServerInterface vendaServer = ws.getPort(VendaServerInterface.class);
+        vendaServer.setServerTime(wsTime);
+    }
 }

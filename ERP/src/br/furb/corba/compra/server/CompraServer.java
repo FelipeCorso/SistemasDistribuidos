@@ -12,39 +12,40 @@ import br.furb.corba.compra.CompraHelper;
 import br.furb.corba.compra.CompraImpl;
 
 public class CompraServer {
-	public static void main(String args[]) {
-		try {
-			// Cria e inicializa o ORB
-			ORB orb = ORB.init(args, null);
 
-			// Cria a implementação e registra no ORB
-			CompraImpl compras = new CompraImpl();
+    public static void main(String args[]) {
+        try {
+            // Cria e inicializa o ORB
+            ORB orb = ORB.init(args, null);
 
-			// Ativa o POA
-			POA rootpoa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
-			rootpoa.the_POAManager().activate();
+            // Cria a implementação e registra no ORB
+            CompraImpl compras = new CompraImpl();
 
-			// Pega a referência do servidor
-			org.omg.CORBA.Object ref = rootpoa.servant_to_reference(compras);
-			Compra href = CompraHelper.narrow(ref);
+            // Ativa o POA
+            POA rootpoa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
+            rootpoa.the_POAManager().activate();
 
-			// Obtêm uma referência para o servidor de nomes
-			org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
-			NamingContextExt namecontextRef = NamingContextExtHelper.narrow(objRef);
+            // Pega a referência do servidor
+            org.omg.CORBA.Object ref = rootpoa.servant_to_reference(compras);
+            Compra href = CompraHelper.narrow(ref);
 
-			// Registra o servidor no servico de nomes
-			String name = "Compras";
-			NameComponent path[] = namecontextRef.to_name(name);
-			namecontextRef.rebind(path, href);
+            // Obtêm uma referência para o servidor de nomes
+            org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
+            NamingContextExt namecontextRef = NamingContextExtHelper.narrow(objRef);
 
-			compras.adicionaLog("Servidor aguardando requisicoes ....");
+            // Registra o servidor no servico de nomes
+            String name = "Compras";
+            NameComponent path[] = namecontextRef.to_name(name);
+            namecontextRef.rebind(path, href);
 
-			// Aguarda chamadas dos clientes
-			orb.run();
-		} catch (Exception e) {
-			System.err.println("ERRO: " + e);
-			e.printStackTrace(System.out);
-		}
-		System.out.println("Encerrando o Servidor.");
-	}
+            compras.adicionaLog("Servidor aguardando requisicoes ....");
+
+            // Aguarda chamadas dos clientes
+            orb.run();
+        } catch (Exception e) {
+            System.err.println("ERRO: " + e);
+            e.printStackTrace(System.out);
+        }
+        System.out.println("Encerrando o Servidor.");
+    }
 }

@@ -13,15 +13,15 @@ import br.furb.common.Produto;
 @SOAPBinding(style = Style.RPC)
 public interface VendaServerInterface {
 
-	@WebMethod
-	boolean efetuarVendaProduto(Produto produto);
+    @WebMethod
+    boolean efetuarVendaProduto(Produto produto);
 
-	@WebMethod
-	public void updateServerTime();
+    @WebMethod
+    public void updateServerTime();
 
-	@WebMethod
-	public LocalTime getServerTime();
+    @WebMethod
+    public LocalTime getServerTime();
 
-	@WebMethod
-	public void setServerTime(LocalTime localTime);
+    @WebMethod
+    public void setServerTime(LocalTime localTime);
 }
