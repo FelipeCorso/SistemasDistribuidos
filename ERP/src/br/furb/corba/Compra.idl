@@ -7,7 +7,12 @@ module br {
 				    void updateServerTime();
 				    long long getServerTime();
 				    void setServerTime(in long long localTime);
-				};									
+					string getIp();
+					long getPort();
+					long getTypeServer();
+					long getStatus();
+				    void checkIfLeaderIsAlive();
+				};	
 			};
 		};
 	};

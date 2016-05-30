@@ -8,29 +8,30 @@ import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.Style;
 
 import br.furb.common.Produto;
-import br.furb.ui.UiServer;
+import br.furb.ws.leaderelection.Server;
 
 @WebService
 @SOAPBinding(style = Style.RPC)
 public interface VendaServerInterface {
 
-	@WebMethod
-	boolean efetuarVendaProduto(Produto produto);
+    @WebMethod
+    boolean efetuarVendaProduto(Produto produto);
 
-	@WebMethod
-	public void updateServerTime();
+    @WebMethod
+    public void updateServerTime();
 
-	@WebMethod
-	public LocalTime getServerTime();
+    @WebMethod
+    public LocalTime getServerTime();
 
-	@WebMethod
-	public void setServerTime(LocalTime localTime);
+    @WebMethod
+    public void setServerTime(LocalTime localTime);
 
-	// @WebMethod
-	public UiServer getUiServer();
+    @WebMethod
+    public Server getServer();
 
-	// public void setLeader(Server server);
-	//
-	// public Server getLeader();
+    @WebMethod
+    public void setServer(Server server);
+
+    void checkIfLeaderIsAlive();
 
 }
