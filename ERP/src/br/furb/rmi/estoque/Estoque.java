@@ -3,9 +3,9 @@ package br.furb.rmi.estoque;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.time.LocalTime;
 import java.util.ArrayList;
 
+import br.furb.common.LocalTime;
 import br.furb.common.Produto;
 import br.furb.ws.leaderelection.Server;
 
@@ -23,8 +23,8 @@ public interface Estoque extends Remote {
 
     void setServerTime(LocalTime localTime) throws RemoteException;
 
-    Server getServer();
+    Server getServer() throws RemoteException;
 
-    void checkIfLeaderIsAlive();
+    void checkIfLeaderIsAlive() throws RemoteException;
 
 }

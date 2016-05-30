@@ -10,6 +10,9 @@ import org.omg.PortableServer.POAHelper;
 import br.furb.corba.compra.Compra;
 import br.furb.corba.compra.CompraHelper;
 import br.furb.corba.compra.CompraImpl;
+import br.furb.ws.leaderelection.Server;
+import br.furb.ws.leaderelection.TypeServer;
+import br.furb.ws.status.Status;
 
 public class CompraServer {
 
@@ -18,8 +21,11 @@ public class CompraServer {
             // Cria e inicializa o ORB
             ORB orb = ORB.init(args, null);
 
+            Server server = new Server();
+            server.setStatus(Status.OK);
+            server.setTypeServer(TypeServer.CORBA);
             // Cria a implementação e registra no ORB
-            CompraImpl compras = new CompraImpl(null);
+            CompraImpl compras = new CompraImpl(server);
 
             // Ativa o POA
             POA rootpoa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
@@ -38,7 +44,7 @@ public class CompraServer {
             NameComponent path[] = namecontextRef.to_name(name);
             namecontextRef.rebind(path, href);
 
-            compras.adicionaLog("Servidor aguardando requisicoes ....");
+            compras.checkIfLeaderIsAlive();
 
             // Aguarda chamadas dos clientes
             orb.run();

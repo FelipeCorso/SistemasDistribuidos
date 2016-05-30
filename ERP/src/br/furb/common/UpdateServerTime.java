@@ -14,42 +14,67 @@ import org.omg.CosNaming.NamingContextPackage.NotFound;
 import br.furb.corba.compra.client.CompraClient;
 import br.furb.rmi.estoque.client.EstoqueClient;
 import br.furb.ui.UiServer;
+import br.furb.ws.leaderelection.Server;
+import br.furb.ws.leaderelection.bully.BullyAlgorithm;
+import br.furb.ws.leaderelection.bully.client.BullyClient;
 import br.furb.ws.venda.client.VendaClient;
 
 public final class UpdateServerTime {
 
-    public static void update(UiServer uiServer) throws MalformedURLException, InvalidName, NotFound, CannotProceed, org.omg.CosNaming.NamingContextPackage.InvalidName, RemoteException, NotBoundException {
-        uiServer.addServerLog("Inicializando sincronização de relógios...");
+    public static void updateServerTime(UiServer uiServer, Server server) throws MalformedURLException, InvalidName, NotFound, CannotProceed, org.omg.CosNaming.NamingContextPackage.InvalidName, RemoteException, NotBoundException {
+        BullyClient bullyClient = new BullyClient();
+        Server leader = bullyClient.getLeader();
+        // Apenas atualiza se o server for o líder
+        if (server.equals(leader)) {
 
-        uiServer.addServerLog("Obtendo hora do módulo venda(WS)");
-        VendaClient wsClient = new VendaClient();
-        LocalTime wsTime = wsClient.getServerTime();
+            uiServer.addServerLog("Inicializando sincronização de relógios.");
 
-        uiServer.addServerLog("Obtendo hora do módulo compra(Corba)");
-        CompraClient corbaClient = new CompraClient();
-        LocalTime corbaTime = corbaClient.getServerTime();
+            uiServer.addServerLog("Obtendo hora do módulo venda(WS)");
+            VendaClient wsClient = new VendaClient();
+            LocalTime wsTime = wsClient.getServerTime();
 
-        uiServer.addServerLog("Obtendo hora do módulo estoque(rmi)");
-        EstoqueClient rmiClient = new EstoqueClient();
-        LocalTime rmiTime = rmiClient.getServerTime();
+            uiServer.addServerLog("Obtendo hora do módulo compra(Corba)");
+            CompraClient corbaClient = new CompraClient();
+            LocalTime corbaTime = corbaClient.getServerTime();
 
-        int amountServers = 3;
-        long idealTimeL = (wsTime.toSecondOfDay() + corbaTime.toSecondOfDay() + rmiTime.toSecondOfDay()) / amountServers;
-        LocalTime idealTime = LocalTime.ofSecondOfDay(idealTimeL);
+            uiServer.addServerLog("Obtendo hora do módulo estoque(rmi)");
+            EstoqueClient rmiClient = new EstoqueClient();
+            LocalTime rmiTime = rmiClient.getServerTime();
 
-        long differenceWSIdealTime = Duration.between(wsTime, idealTime).get(ChronoUnit.SECONDS);
-        long differenceCorbaIdealTime = Duration.between(corbaTime, idealTime).get(ChronoUnit.SECONDS);
-        long differenceRMIIdealTime = Duration.between(rmiTime, idealTime).get(ChronoUnit.SECONDS);
+            int amountServers = 3;
+            long idealTimeL = (wsTime.toSecondOfDay() + corbaTime.toSecondOfDay() + rmiTime.toSecondOfDay()) / amountServers;
+            LocalTime idealTime = LocalTime.ofSecondOfDay(idealTimeL);
 
-        wsTime.plusSeconds(differenceWSIdealTime);
-        corbaTime.plusSeconds(differenceCorbaIdealTime);
-        rmiTime.plusSeconds(differenceRMIIdealTime);
+            long differenceWSIdealTime = Duration.between(wsTime, idealTime).get(ChronoUnit.SECONDS);
+            long differenceCorbaIdealTime = Duration.between(corbaTime, idealTime).get(ChronoUnit.SECONDS);
+            long differenceRMIIdealTime = Duration.between(rmiTime, idealTime).get(ChronoUnit.SECONDS);
 
-        wsClient.setServerTime(wsTime);
-        corbaClient.setServerTime(corbaTime);
-        rmiClient.setServerTime(rmiTime);
+            wsTime.plusSeconds(differenceWSIdealTime);
+            corbaTime.plusSeconds(differenceCorbaIdealTime);
+            rmiTime.plusSeconds(differenceRMIIdealTime);
 
-        uiServer.addServerLog("Finalizando sincronização dos relógios...");
+            wsClient.setServerTime(wsTime);
+            corbaClient.setServerTime(corbaTime);
+            rmiClient.setServerTime(rmiTime);
+
+            uiServer.addServerLog("Finalizando sincronização dos relógios...");
+        }
+    }
+
+    public static void checkIfLeaderIsAlive(UiServer uiServer, Server server) {
+        while (true) {
+            try {
+                Thread.sleep(5000);
+                uiServer.addServerLog("Verificando se o líder está ativo.");
+                BullyAlgorithm bullyAlgorithm = new BullyAlgorithm();
+                bullyAlgorithm.checkIfLeaderIsAlive(server);
+                updateServerTime(uiServer, server);
+            } catch (InterruptedException | MalformedURLException | InvalidName | NotFound | CannotProceed
+                    | org.omg.CosNaming.NamingContextPackage.InvalidName | RemoteException | NotBoundException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
 }

@@ -1,13 +1,7 @@
 package br.furb.corba.compra;
 
-import java.net.MalformedURLException;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.time.LocalTime;
-
-import org.omg.CORBA.ORBPackage.InvalidName;
-import org.omg.CosNaming.NamingContextPackage.CannotProceed;
-import org.omg.CosNaming.NamingContextPackage.NotFound;
 
 import br.furb.common.Produto;
 import br.furb.common.UpdateServerTime;
@@ -15,8 +9,6 @@ import br.furb.rmi.estoque.Estoque;
 import br.furb.rmi.estoque.client.ClientEstoque;
 import br.furb.ui.UiServer;
 import br.furb.ws.leaderelection.Server;
-import br.furb.ws.leaderelection.bully.BullyAlgorithm;
-import br.furb.ws.leaderelection.bully.client.BullyClient;
 
 public class CompraImpl extends CompraPOA {
 
@@ -29,8 +21,10 @@ public class CompraImpl extends CompraPOA {
         this.server = server;
         runUiServer();
         clientEstoque = new ClientEstoque();
+        uiServer.addServerLog("Servidor aguardando requisicoes ....");
     }
 
+    @Override
     public boolean recebeNota(int aCodigo, String aNome, int aQuantidade, double aValorUnitario) {
         adicionaLog("Compras recebeu nota fiscal de entrada");
         Produto produto = new Produto();
@@ -58,30 +52,21 @@ public class CompraImpl extends CompraPOA {
 
     @Override
     public void checkIfLeaderIsAlive() {
-        while (true) {
-            try {
-                Thread.sleep(5000);
-                BullyAlgorithm bullyAlgorithm = new BullyAlgorithm();
-                bullyAlgorithm.checkIfLeaderIsAlive(server);
-                updateServerTime();
-            } catch (InterruptedException | MalformedURLException e) {
-                e.printStackTrace();
-            }
-        }
+        UpdateServerTime.checkIfLeaderIsAlive(uiServer, server);
     }
 
     @Override
     public void updateServerTime() {
-        try {
-            BullyClient bullyClient = new BullyClient();
-            Server leader = bullyClient.getLeader();
-            if (this.server.equals(leader)) {
-                UpdateServerTime.update(uiServer);
-            }
-        } catch (MalformedURLException | InvalidName | NotFound | CannotProceed
-                | org.omg.CosNaming.NamingContextPackage.InvalidName | RemoteException | NotBoundException e) {
-            e.printStackTrace();
-        }
+        //        try {
+        //            BullyClient bullyClient = new BullyClient();
+        //            Server leader = bullyClient.getLeader();
+        //            if (this.server.equals(leader)) {
+        //                UpdateServerTime.updateServerTime(uiServer);
+        //            }
+        //        } catch (MalformedURLException | InvalidName | NotFound | CannotProceed
+        //                | org.omg.CosNaming.NamingContextPackage.InvalidName | RemoteException | NotBoundException e) {
+        //            e.printStackTrace();
+        //        }
     }
 
     @Override
@@ -98,7 +83,7 @@ public class CompraImpl extends CompraPOA {
     public void runUiServer() {
         uiServer = new UiServer(serverTime);
         uiServer.setVisible(true);
-        uiServer.NomeServidor("Server Compras");
+        uiServer.setTitle("Server Compras");
     }
 
     @Override

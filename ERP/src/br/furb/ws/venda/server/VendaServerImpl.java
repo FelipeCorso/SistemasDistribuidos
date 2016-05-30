@@ -1,15 +1,9 @@
 package br.furb.ws.venda.server;
 
-import java.net.MalformedURLException;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.time.LocalTime;
 
 import javax.jws.WebService;
-
-import org.omg.CORBA.ORBPackage.InvalidName;
-import org.omg.CosNaming.NamingContextPackage.CannotProceed;
-import org.omg.CosNaming.NamingContextPackage.NotFound;
 
 import br.furb.common.Produto;
 import br.furb.common.UpdateServerTime;
@@ -17,8 +11,6 @@ import br.furb.rmi.estoque.Estoque;
 import br.furb.rmi.estoque.client.ClientEstoque;
 import br.furb.ui.UiServer;
 import br.furb.ws.leaderelection.Server;
-import br.furb.ws.leaderelection.bully.BullyAlgorithm;
-import br.furb.ws.leaderelection.bully.client.BullyClient;
 
 @WebService(endpointInterface = "br.furb.ws.venda.server.VendaServerInterface")
 public class VendaServerImpl implements VendaServerInterface {
@@ -35,22 +27,14 @@ public class VendaServerImpl implements VendaServerInterface {
 
     @Override
     public void checkIfLeaderIsAlive() {
-        while (true) {
-            try {
-                Thread.sleep(5000);
-                BullyAlgorithm bullyAlgorithm = new BullyAlgorithm();
-                bullyAlgorithm.checkIfLeaderIsAlive(getServer());
-                updateServerTime();
-            } catch (InterruptedException | MalformedURLException e) {
-                e.printStackTrace();
-            }
-        }
+        UpdateServerTime.checkIfLeaderIsAlive(uiServer, server);
     }
 
     private boolean comunicarFinancaVenda() {
         return true;// aqui ficará a integração do Vendas com o financeiro.
     }
 
+    @Override
     public boolean efetuarVendaProduto(Produto produto) {
         try {
             uiServer.addServerLog("executando efetuarVendaProduto()");
@@ -68,17 +52,16 @@ public class VendaServerImpl implements VendaServerInterface {
 
     @Override
     public void updateServerTime() {
-        try {
-
-            BullyClient bullyClient = new BullyClient();
-            Server leader = bullyClient.getLeader();
-            if (this.getServer().equals(leader)) {
-                UpdateServerTime.update(uiServer);
-            }
-        } catch (MalformedURLException | InvalidName | NotFound | CannotProceed
-                | org.omg.CosNaming.NamingContextPackage.InvalidName | RemoteException | NotBoundException e) {
-            e.printStackTrace();
-        }
+        //        try {
+        //            BullyClient bullyClient = new BullyClient();
+        //            Server leader = bullyClient.getLeader();
+        //            if (this.getServer().equals(leader)) {
+        //                UpdateServerTime.updateServerTime(uiServer);
+        //            }
+        //        } catch (MalformedURLException | InvalidName | NotFound | CannotProceed
+        //                | org.omg.CosNaming.NamingContextPackage.InvalidName | RemoteException | NotBoundException e) {
+        //            e.printStackTrace();
+        //        }
     }
 
     @Override

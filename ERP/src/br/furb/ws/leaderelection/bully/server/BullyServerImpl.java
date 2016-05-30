@@ -18,43 +18,32 @@ public class BullyServerImpl implements BullyServerInterface {
     private Server leader = new Server();
 
     public BullyServerImpl() {
-	runUiServer();
-	uiServer.addServerLog("Servidor aguardando requisicoes ....");
+        runUiServer();
+        uiServer.addServerLog("Servidor aguardando requisicoes ....");
     }
 
     public void runUiServer() {
-	uiServer = new UiServer(serverTime);
-	uiServer.setVisible(true);
-	uiServer.setTitle("Server Bully");
-    }
-
-    private void checkServersStatus() {
-	while (true) {
-	    try {
-		Thread.sleep(5000);
-
-	    } catch (InterruptedException e) {
-		e.printStackTrace();
-	    }
-	}
+        uiServer = new UiServer(serverTime);
+        uiServer.setVisible(true);
+        uiServer.setTitle("Server Bully");
     }
 
     @Override
     public void addServer(Server server) {
-	servers.add(server);
+        servers.add(server);
     }
 
     @Override
     public Server getLeader() {
-	return leader;
+        return leader;
     }
 
     @Override
     public void electServer(Server server) {
-	synchronized (this.leader) {
-	    this.leader = server;
-	    uiServer.addServerLog("Novo líder definido, " + server.toString());
-	}
+        synchronized(this.leader) {
+            this.leader = server;
+            uiServer.addServerLog("Novo líder definido, " + server.toString());
+        }
     }
 
 }

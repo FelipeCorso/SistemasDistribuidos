@@ -27,6 +27,7 @@ import br.furb.ws.venda.server.VendaServerInterface;
 
 public class TelaClients extends JFrame {
 
+    private static final long serialVersionUID = -4580933946329810235L;
     private JPanel contentPane;
     private JTextField edCodigoProduto;
     private JTextField edDescricaoProduto;
@@ -39,6 +40,7 @@ public class TelaClients extends JFrame {
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 try {
                     TelaClients frame = new TelaClients();
@@ -62,7 +64,6 @@ public class TelaClients extends JFrame {
             listaEstoque.setModel(modelo);
 
         } catch (RemoteException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -84,6 +85,7 @@ public class TelaClients extends JFrame {
         JButton btnModuloVenda = new JButton("Modulo Venda");
         btnModuloVenda.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent arg0) {
                 VendaServerInterface venda = VendaClient.retornaClientVendas();
                 Produto produto = new Produto();
@@ -101,6 +103,7 @@ public class TelaClients extends JFrame {
         JButton btnModuloCompra = new JButton("Modulo Compra");
         btnModuloCompra.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent arg0) {
                 String[] args = new String[2];
                 CompraClient compraClient = new CompraClient();
@@ -115,6 +118,7 @@ public class TelaClients extends JFrame {
         JButton btnAtualizarGridEstoque = new JButton("Atualizar Grid Estoque");
         btnAtualizarGridEstoque.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent arg0) {
                 CarregaMemoEstoque(listaEstoque);
             }
