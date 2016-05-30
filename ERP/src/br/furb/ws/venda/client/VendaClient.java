@@ -18,55 +18,55 @@ public class VendaClient {
     private static final String NAMESPACE_VENDA_WS = "http://server.venda.ws.furb.br/";
 
     public static void main(String args[]) throws Exception {
-	URL url = new URL(URL_VENDA_WS);
-	QName qname = new QName(NAMESPACE_VENDA_WS, "VendaServerImplService");
-	Service ws = Service.create(url, qname);
-	VendaServerInterface venda = ws.getPort(VendaServerInterface.class);
-	Server server = venda.getServer();
-	System.out.println("IP: " + server.getIp());
-	System.out.println("Port: " + server.getPort());
-	System.out.println("Type: " + server.getTypeServer().toString());
+        URL url = new URL(URL_VENDA_WS);
+        QName qname = new QName(NAMESPACE_VENDA_WS, "VendaServerImplService");
+        Service ws = Service.create(url, qname);
+        VendaServerInterface venda = ws.getPort(VendaServerInterface.class);
+        Server server = venda.getServer();
+        System.out.println("IP: " + server.getIp());
+        System.out.println("Port: " + server.getPort());
+        System.out.println("Type: " + server.getTypeServer().toString());
     }
 
     public static VendaServerInterface retornaClientVendas() {
-	try {
-	    URL url = new URL(URL_VENDA_WS);
-	    QName qname = new QName(NAMESPACE_VENDA_WS, "VendaServerImplService");
-	    Service ws = Service.create(url, qname);
-	    VendaServerInterface venda = ws.getPort(VendaServerInterface.class);
-	    return venda;
-	} catch (MalformedURLException e) {
-	    e.printStackTrace();
-	}
-	return null;
+        try {
+            URL url = new URL(URL_VENDA_WS);
+            QName qname = new QName(NAMESPACE_VENDA_WS, "VendaServerImplService");
+            Service ws = Service.create(url, qname);
+            VendaServerInterface venda = ws.getPort(VendaServerInterface.class);
+            return venda;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public LocalTime getServerTime() throws MalformedURLException {
-	URL url = new URL(URL_VENDA_WS);
-	QName qname = new QName(NAMESPACE_VENDA_WS, "VendaServerImplService");
-	Service ws = Service.create(url, qname);
-	VendaServerInterface vendaServer = ws.getPort(VendaServerInterface.class);
-	return vendaServer.getServerTime();
+        URL url = new URL(URL_VENDA_WS);
+        QName qname = new QName(NAMESPACE_VENDA_WS, "VendaServerImplService");
+        Service ws = Service.create(url, qname);
+        VendaServerInterface vendaServer = ws.getPort(VendaServerInterface.class);
+        return vendaServer.getServerTime();
     }
 
     public void setServerTime(LocalTime wsTime) throws MalformedURLException {
-	URL url = new URL(URL_VENDA_WS);
-	QName qname = new QName(NAMESPACE_VENDA_WS, "VendaServerImplService");
-	Service ws = Service.create(url, qname);
-	VendaServerInterface vendaServer = ws.getPort(VendaServerInterface.class);
-	vendaServer.setServerTime(wsTime);
+        URL url = new URL(URL_VENDA_WS);
+        QName qname = new QName(NAMESPACE_VENDA_WS, "VendaServerImplService");
+        Service ws = Service.create(url, qname);
+        VendaServerInterface vendaServer = ws.getPort(VendaServerInterface.class);
+        vendaServer.setServerTime(wsTime);
     }
 
     public Status getServerStatus(Server server) throws MalformedURLException {
-	URL url = new URL("http://" + server.getIp() + ":" + server.getPort() + "/br.furb.ws.venda.server?wsdl");
-	QName qname = new QName(NAMESPACE_VENDA_WS, "VendaServerImplService");
-	try {
-	    Service ws = Service.create(url, qname);
-	    VendaServerInterface vendaServer = ws.getPort(VendaServerInterface.class);
-	    return vendaServer.getServer().getStatus();
-	} catch (WebServiceException wse) {
-	    wse.printStackTrace();
-	    return Status.INTERNAL_SERVER_ERROR;
-	}
+        URL url = new URL("http://" + server.getIp() + ":" + server.getPort() + "/br.furb.ws.venda.server?wsdl");
+        QName qname = new QName(NAMESPACE_VENDA_WS, "VendaServerImplService");
+        try {
+            Service ws = Service.create(url, qname);
+            VendaServerInterface vendaServer = ws.getPort(VendaServerInterface.class);
+            return vendaServer.getServer().getStatus();
+        } catch (WebServiceException wse) {
+            wse.printStackTrace();
+            return Status.INTERNAL_SERVER_ERROR;
+        }
     }
 }

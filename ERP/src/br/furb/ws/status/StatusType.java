@@ -4,6 +4,7 @@ package br.furb.ws.status;
  * Base interface for statuses used in responses.
  */
 public interface StatusType {
+
     /**
      * Get the associated status code
      * 

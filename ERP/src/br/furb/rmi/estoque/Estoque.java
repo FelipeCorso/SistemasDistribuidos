@@ -10,6 +10,7 @@ import br.furb.common.Produto;
 import br.furb.ws.leaderelection.Server;
 
 public interface Estoque extends Remote {
+
     String receberProduto(Produto umProduto) throws RemoteException;
 
     String retirarProduto(Produto produtoRetornado) throws RemoteException;

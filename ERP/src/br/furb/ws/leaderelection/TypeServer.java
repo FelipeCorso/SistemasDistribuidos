@@ -6,11 +6,11 @@ public enum TypeServer {
     private final int code;
 
     private TypeServer(int code) {
-	this.code = code;
+        this.code = code;
     }
 
     public int getCode() {
-	return code;
+        return code;
     }
 
     /**
@@ -21,11 +21,11 @@ public enum TypeServer {
      * @return the matching Status or null is no matching Status is defined
      */
     public static TypeServer fromCode(final int statusCode) {
-	for (TypeServer s : TypeServer.values()) {
-	    if (s.code == statusCode) {
-		return s;
-	    }
-	}
-	return null;
+        for (TypeServer s : TypeServer.values()) {
+            if (s.code == statusCode) {
+                return s;
+            }
+        }
+        return null;
     }
 }

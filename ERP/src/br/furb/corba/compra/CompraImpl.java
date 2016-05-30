@@ -26,99 +26,99 @@ public class CompraImpl extends CompraPOA {
     private ClientEstoque clientEstoque;
 
     public CompraImpl(Server server) {
-	this.server = server;
-	runUiServer();
-	clientEstoque = new ClientEstoque();
+        this.server = server;
+        runUiServer();
+        clientEstoque = new ClientEstoque();
     }
 
     public boolean recebeNota(int aCodigo, String aNome, int aQuantidade, double aValorUnitario) {
-	adicionaLog("Compras recebeu nota fiscal de entrada");
-	Produto produto = new Produto();
-	produto.setCodigoProduto(aCodigo);
-	produto.setDescricaoProduto(aNome);
-	produto.setQtdProduto(aQuantidade);
-	produto.setValorUnitario(aValorUnitario);
-	return comunicaEstoque(produto);
+        adicionaLog("Compras recebeu nota fiscal de entrada");
+        Produto produto = new Produto();
+        produto.setCodigoProduto(aCodigo);
+        produto.setDescricaoProduto(aNome);
+        produto.setQtdProduto(aQuantidade);
+        produto.setValorUnitario(aValorUnitario);
+        return comunicaEstoque(produto);
     };
 
     private boolean comunicaEstoque(Produto umProduto) {
-	try {
-	    adicionaLog("Servidor compras comunicando servidor estoque");
-	    Estoque estoque = clientEstoque.retornaComunicacaoServer();
-	    adicionaLog("Retorno Estoque: " + estoque.receberProduto(umProduto));
-	} catch (RemoteException e) {
-	    e.printStackTrace();
-	}
-	return true;
+        try {
+            adicionaLog("Servidor compras comunicando servidor estoque");
+            Estoque estoque = clientEstoque.retornaComunicacaoServer();
+            adicionaLog("Retorno Estoque: " + estoque.receberProduto(umProduto));
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 
     public void adicionaLog(String log) {
-	uiServer.addServerLog(log);
+        uiServer.addServerLog(log);
     }
 
     @Override
     public void checkIfLeaderIsAlive() {
-	while (true) {
-	    try {
-		Thread.sleep(5000);
-		BullyAlgorithm bullyAlgorithm = new BullyAlgorithm();
-		bullyAlgorithm.checkIfLeaderIsAlive(server);
-		updateServerTime();
-	    } catch (InterruptedException | MalformedURLException e) {
-		e.printStackTrace();
-	    }
-	}
+        while (true) {
+            try {
+                Thread.sleep(5000);
+                BullyAlgorithm bullyAlgorithm = new BullyAlgorithm();
+                bullyAlgorithm.checkIfLeaderIsAlive(server);
+                updateServerTime();
+            } catch (InterruptedException | MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
     public void updateServerTime() {
-	try {
-	    BullyClient bullyClient = new BullyClient();
-	    Server leader = bullyClient.getLeader();
-	    if (this.server.equals(leader)) {
-		UpdateServerTime.update(uiServer);
-	    }
-	} catch (MalformedURLException | InvalidName | NotFound | CannotProceed
-		| org.omg.CosNaming.NamingContextPackage.InvalidName | RemoteException | NotBoundException e) {
-	    e.printStackTrace();
-	}
+        try {
+            BullyClient bullyClient = new BullyClient();
+            Server leader = bullyClient.getLeader();
+            if (this.server.equals(leader)) {
+                UpdateServerTime.update(uiServer);
+            }
+        } catch (MalformedURLException | InvalidName | NotFound | CannotProceed
+                | org.omg.CosNaming.NamingContextPackage.InvalidName | RemoteException | NotBoundException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public long getServerTime() {
-	return serverTime.toSecondOfDay();
+        return serverTime.toSecondOfDay();
     }
 
     @Override
     public void setServerTime(long newServerTime) {
-	serverTime = LocalTime.ofSecondOfDay(newServerTime);
-	uiServer.setCurrentTime(serverTime);
+        serverTime = LocalTime.ofSecondOfDay(newServerTime);
+        uiServer.setCurrentTime(serverTime);
     }
 
     public void runUiServer() {
-	uiServer = new UiServer(serverTime);
-	uiServer.setVisible(true);
-	uiServer.NomeServidor("Server Compras");
+        uiServer = new UiServer(serverTime);
+        uiServer.setVisible(true);
+        uiServer.NomeServidor("Server Compras");
     }
 
     @Override
     public String getIp() {
-	return server.getIp();
+        return server.getIp();
     }
 
     @Override
     public int getPort() {
-	return server.getPort();
+        return server.getPort();
     }
 
     @Override
     public int getTypeServer() {
-	return server.getTypeServer().getCode();
+        return server.getTypeServer().getCode();
     }
 
     @Override
     public int getStatus() {
-	return server.getStatus().getStatusCode();
+        return server.getStatus().getStatusCode();
     }
 
 }
