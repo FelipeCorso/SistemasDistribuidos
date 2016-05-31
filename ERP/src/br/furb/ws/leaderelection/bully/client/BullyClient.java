@@ -15,27 +15,27 @@ public class BullyClient {
     private static final String NAMESPACE_URI = "http://server.bully.leaderelection.ws.furb.br/";
 
     public void addServer(Server server) throws MalformedURLException {
-	URL url = new URL(URL_BULLY);
-	QName qname = new QName(NAMESPACE_URI, "BullyServerImplService");
-	Service ws = Service.create(url, qname);
-	BullyServerInterface bullyServer = ws.getPort(BullyServerInterface.class);
-	bullyServer.addServer(server);
+        URL url = new URL(URL_BULLY);
+        QName qname = new QName(NAMESPACE_URI, "BullyServerImplService");
+        Service ws = Service.create(url, qname);
+        BullyServerInterface bullyServer = ws.getPort(BullyServerInterface.class);
+        bullyServer.addServer(server);
     }
 
     public Server getLeader() throws MalformedURLException {
-	URL url = new URL(URL_BULLY);
-	QName qname = new QName(NAMESPACE_URI, "BullyServerImplService");
-	Service ws = Service.create(url, qname);
-	BullyServerInterface bullyServer = ws.getPort(BullyServerInterface.class);
-	return bullyServer.getLeader();
+        URL url = new URL(URL_BULLY);
+        QName qname = new QName(NAMESPACE_URI, "BullyServerImplService");
+        Service ws = Service.create(url, qname);
+        BullyServerInterface bullyServer = ws.getPort(BullyServerInterface.class);
+        return bullyServer.getLeader();
     }
 
     public void electServer(Server server) throws MalformedURLException {
-	URL url = new URL(URL_BULLY);
-	QName qname = new QName(NAMESPACE_URI, "BullyServerImplService");
-	Service ws = Service.create(url, qname);
-	BullyServerInterface bullyServer = ws.getPort(BullyServerInterface.class);
-	bullyServer.electServer(server);
+        URL url = new URL(URL_BULLY);
+        QName qname = new QName(NAMESPACE_URI, "BullyServerImplService");
+        Service ws = Service.create(url, qname);
+        BullyServerInterface bullyServer = ws.getPort(BullyServerInterface.class);
+        bullyServer.electServer(server);
     }
 
     // public static void main(String[] args) {

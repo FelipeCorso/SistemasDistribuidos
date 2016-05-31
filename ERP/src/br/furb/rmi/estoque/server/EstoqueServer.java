@@ -1,12 +1,14 @@
 /** HelloServer.java **/
 package br.furb.rmi.estoque.server;
 
-import java.rmi.Naming;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
-import br.furb.common.LocalTime;
+import org.joda.time.LocalTime;
+
 import br.furb.common.Produto;
 import br.furb.common.UpdateServerTime;
 import br.furb.corba.compra.Compra;
@@ -17,9 +19,8 @@ import br.furb.ui.UiServer;
 import br.furb.ws.leaderelection.Server;
 import br.furb.ws.leaderelection.TypeServer;
 
-public class EstoqueServer extends UnicastRemoteObject implements Estoque {
+public class EstoqueServer implements Estoque {
 
-    private static final long serialVersionUID = 6656593965477187763L;
     private LocalTime serverTime = new LocalTime();
     private UiServer uiServer;
     private Server server; // O próprio servidor
@@ -33,24 +34,42 @@ public class EstoqueServer extends UnicastRemoteObject implements Estoque {
         uiServer.addServerLog("Servidor aguardando requisicoes ....");
     }
 
-    // main()
-    public static void main(String[] args) {
-        try {
+    //    public static void main(String[] args) {
+    //        try {
+    //
+    //            RemoteInterface v=new RemoteObject();
+    //            java.rmi.Naming.rebind("//:5099/count", v);
+    //            System.setProperty("java.security.policy", "./server.policy");
+    //            System.setProperty("java.security.policy", "file:./security.policy");
+    //            -Djava.security.manager -Djava.security.policy=src/br/furb/rmi/estoque/server/server.policy
+    //            System.setSecurityManager(new java.rmi.RMISecurityManager());
+    //            Server server = new Server("localhost", 1099, TypeServer.RMI);
+    //            java.rmi.registry.LocateRegistry.createRegistry(server.getPort());
+    //            EstoqueServer estoqueServer = new EstoqueServer(server);
+    //            Naming.rebind("//" + server.getIp() + "/Estoque", estoqueServer);
+    //            Naming.rebind("//" + server.getIp() + "/Estoque", estoqueServer);
+    //            estoqueServer.checkIfLeaderIsAlive();
+    //        } catch (Exception ex) {
+    //            ex.printStackTrace();
+    //        }
+    //    }
 
-            //            RemoteInterface v=new RemoteObject();
-            //            java.rmi.Naming.rebind("//:5099/count", v);
-            //            System.setProperty("java.security.policy", "./server.policy");
-            System.setProperty("java.security.policy", "file:./security.policy");
-            //            -Djava.security.manager -Djava.security.policy=src/br/furb/rmi/estoque/server/server.policy
-            System.setSecurityManager(new java.rmi.RMISecurityManager());
-            Server server = new Server("127.0.0.1", 9191, TypeServer.RMI);
-            java.rmi.registry.LocateRegistry.createRegistry(server.getPort());
-            EstoqueServer estoqueServer = new EstoqueServer(server);
-            Naming.rebind("//" + server.getIp() + ":" + server.getPort() + "/Estoque", estoqueServer);
-            //            Naming.rebind("//" + server.getIp() + "/Estoque", estoqueServer);
-            estoqueServer.checkIfLeaderIsAlive();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+    public static void main(String args[]) {
+
+        try {
+            Server server = new Server("localhost", 1099, TypeServer.RMI);
+            EstoqueServer obj = new EstoqueServer(server);
+            Estoque stub = (Estoque) UnicastRemoteObject.exportObject(obj, 0);
+
+            // Bind the remote object's stub in the registry
+            Registry registry = LocateRegistry.getRegistry(server.getIp(), server.getPort());
+            registry.bind("Estoque", stub);
+
+            stub.checkIfLeaderIsAlive();
+
+        } catch (Exception e) {
+            System.err.println("Server exception: " + e.toString());
+            e.printStackTrace();
         }
     }
 
@@ -129,11 +148,11 @@ public class EstoqueServer extends UnicastRemoteObject implements Estoque {
     @Override
     public void setServerTime(LocalTime newServerTime) {
         serverTime = newServerTime;
-        uiServer.setCurrentTime(serverTime.getLocalTime());
+        uiServer.setCurrentTime(serverTime);
     }
 
     public void runUiServer() {
-        uiServer = new UiServer(serverTime.getLocalTime());
+        uiServer = new UiServer(serverTime);
         uiServer.setVisible(true);
         uiServer.setTitle("Server Estoque");
     }

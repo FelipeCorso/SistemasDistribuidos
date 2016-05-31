@@ -5,7 +5,8 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
-import br.furb.common.LocalTime;
+import org.joda.time.LocalTime;
+
 import br.furb.common.Produto;
 import br.furb.ws.leaderelection.Server;
 

@@ -1,11 +1,13 @@
 package br.furb.ws.venda.server;
 
-import java.time.LocalTime;
+
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.Style;
+
+import org.joda.time.LocalTime;
 
 import br.furb.common.Produto;
 import br.furb.ws.leaderelection.Server;

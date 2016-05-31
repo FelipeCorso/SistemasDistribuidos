@@ -19,7 +19,7 @@ public class BullyAlgorithm {
 
     private static final int NUMBER_OF_ATTEMPTS = 3;
 
-    public void checkIfLeaderIsAlive(Server server) throws MalformedURLException {
+    public Status getLeaderStatus(Server server) throws MalformedURLException {
         BullyClient bullyClient = new BullyClient();
         Status leaderStatus = Status.INTERNAL_SERVER_ERROR;
         try {
@@ -48,9 +48,7 @@ public class BullyAlgorithm {
                 | RemoteException | NotBoundException e) {
             e.printStackTrace();
         }
-        if (leaderStatus != Status.OK) {
-            bullyClient.electServer(server);
-        }
+        return leaderStatus;
     }
 
 }

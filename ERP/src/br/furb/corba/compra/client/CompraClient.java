@@ -1,7 +1,6 @@
 package br.furb.corba.compra.client;
 
-import java.time.LocalTime;
-
+import org.joda.time.LocalTime;
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.ORBPackage.InvalidName;
 import org.omg.CosNaming.NamingContextExt;
@@ -66,46 +65,60 @@ public class CompraClient {
         return null;
     }
 
-    public LocalTime getServerTime() throws InvalidName, NotFound, CannotProceed, org.omg.CosNaming.NamingContextPackage.InvalidName {
-        // Cria e inicializa o ORB
-        ORB orb = ORB.init(new String[0], null);
+    public LocalTime getServerTime() {
+        try {
+            // Cria e inicializa o ORB
+            ORB orb = ORB.init(new String[0], null);
 
-        // Obtem referencia para o servico de nomes
-        org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
-        NamingContextExt namecontextRef = NamingContextExtHelper.narrow(objRef);
+            // Obtem referencia para o servico de nomes
+            org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
+            NamingContextExt namecontextRef = NamingContextExtHelper.narrow(objRef);
 
-        // Obtem referencia para o servidor
-        String name = "Compras";
-        Compra compraServer = CompraHelper.narrow(namecontextRef.resolve_str(name));
-        return LocalTime.ofSecondOfDay(compraServer.getServerTime());
+            // Obtem referencia para o servidor
+            String name = "Compras";
+            Compra compraServer = CompraHelper.narrow(namecontextRef.resolve_str(name));
+            return LocalTime.fromMillisOfDay(compraServer.getServerTime());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return LocalTime.now();
     }
 
-    public void setServerTime(LocalTime corbaTime) throws InvalidName, NotFound, CannotProceed, org.omg.CosNaming.NamingContextPackage.InvalidName {
-        // Cria e inicializa o ORB
-        ORB orb = ORB.init(new String[0], null);
+    public void setServerTime(LocalTime corbaTime) {
+        try {
+            // Cria e inicializa o ORB
+            ORB orb = ORB.init(new String[0], null);
 
-        // Obtem referencia para o servico de nomes
-        org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
-        NamingContextExt namecontextRef = NamingContextExtHelper.narrow(objRef);
+            // Obtem referencia para o servico de nomes
+            org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
+            NamingContextExt namecontextRef = NamingContextExtHelper.narrow(objRef);
 
-        // Obtem referencia para o servidor
-        String name = "Compras";
-        Compra compraServer = CompraHelper.narrow(namecontextRef.resolve_str(name));
-        compraServer.setServerTime(corbaTime.toSecondOfDay());
+            // Obtem referencia para o servidor
+            String name = "Compras";
+            Compra compraServer = CompraHelper.narrow(namecontextRef.resolve_str(name));
+            compraServer.setServerTime(corbaTime.getMillisOfDay());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public Status getServerStatus(Server server) throws InvalidName, NotFound, CannotProceed, org.omg.CosNaming.NamingContextPackage.InvalidName {
-        // Cria e inicializa o ORB
-        ORB orb = ORB.init(new String[0], null);
+        try {
+            // Cria e inicializa o ORB
+            ORB orb = ORB.init(new String[0], null);
 
-        // Obtem referencia para o servico de nomes
-        org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
-        NamingContextExt namecontextRef = NamingContextExtHelper.narrow(objRef);
+            // Obtem referencia para o servico de nomes
+            org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
+            NamingContextExt namecontextRef = NamingContextExtHelper.narrow(objRef);
 
-        // Obtem referencia para o servidor
-        String name = "Compras";
-        Compra compraServer = CompraHelper.narrow(namecontextRef.resolve_str(name));
+            // Obtem referencia para o servidor
+            String name = "Compras";
+            Compra compraServer = CompraHelper.narrow(namecontextRef.resolve_str(name));
 
-        return Status.fromStatusCode(compraServer.getStatus());
+            return Status.fromStatusCode(compraServer.getStatus());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Status.INTERNAL_SERVER_ERROR;
     }
 }

@@ -1,10 +1,11 @@
 package br.furb.ws.leaderelection.bully.server;
 
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.jws.WebService;
+
+import org.joda.time.LocalTime;
 
 import br.furb.ui.UiServer;
 import br.furb.ws.leaderelection.Server;

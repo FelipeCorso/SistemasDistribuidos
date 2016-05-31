@@ -1,9 +1,10 @@
 package br.furb.ws.venda.server;
 
 import java.rmi.RemoteException;
-import java.time.LocalTime;
 
 import javax.jws.WebService;
+
+import org.joda.time.LocalTime;
 
 import br.furb.common.Produto;
 import br.furb.common.UpdateServerTime;

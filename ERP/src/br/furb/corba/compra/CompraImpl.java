@@ -1,7 +1,8 @@
 package br.furb.corba.compra;
 
 import java.rmi.RemoteException;
-import java.time.LocalTime;
+
+import org.joda.time.LocalTime;
 
 import br.furb.common.Produto;
 import br.furb.common.UpdateServerTime;
@@ -71,12 +72,12 @@ public class CompraImpl extends CompraPOA {
 
     @Override
     public long getServerTime() {
-        return serverTime.toSecondOfDay();
+        return serverTime.getMillisOfDay();
     }
 
     @Override
     public void setServerTime(long newServerTime) {
-        serverTime = LocalTime.ofSecondOfDay(newServerTime);
+        serverTime = LocalTime.fromMillisOfDay(newServerTime);
         uiServer.setCurrentTime(serverTime);
     }
 

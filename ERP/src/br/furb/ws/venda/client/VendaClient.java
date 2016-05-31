@@ -2,11 +2,11 @@ package br.furb.ws.venda.client;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.LocalTime;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceException;
+
+import org.joda.time.LocalTime;
 
 import br.furb.ws.leaderelection.Server;
 import br.furb.ws.status.Status;
@@ -41,32 +41,41 @@ public class VendaClient {
         return null;
     }
 
-    public LocalTime getServerTime() throws MalformedURLException {
-        URL url = new URL(URL_VENDA_WS);
-        QName qname = new QName(NAMESPACE_VENDA_WS, "VendaServerImplService");
-        Service ws = Service.create(url, qname);
-        VendaServerInterface vendaServer = ws.getPort(VendaServerInterface.class);
-        return vendaServer.getServerTime();
-    }
-
-    public void setServerTime(LocalTime wsTime) throws MalformedURLException {
-        URL url = new URL(URL_VENDA_WS);
-        QName qname = new QName(NAMESPACE_VENDA_WS, "VendaServerImplService");
-        Service ws = Service.create(url, qname);
-        VendaServerInterface vendaServer = ws.getPort(VendaServerInterface.class);
-        vendaServer.setServerTime(wsTime);
-    }
-
-    public Status getServerStatus(Server server) throws MalformedURLException {
-        URL url = new URL("http://" + server.getIp() + ":" + server.getPort() + "/br.furb.ws.venda.server?wsdl");
-        QName qname = new QName(NAMESPACE_VENDA_WS, "VendaServerImplService");
+    public LocalTime getServerTime() {
         try {
+            URL url = new URL(URL_VENDA_WS);
+            QName qname = new QName(NAMESPACE_VENDA_WS, "VendaServerImplService");
+            Service ws = Service.create(url, qname);
+            VendaServerInterface vendaServer = ws.getPort(VendaServerInterface.class);
+            return vendaServer.getServerTime();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return LocalTime.now();
+    }
+
+    public void setServerTime(LocalTime wsTime) {
+        try {
+            URL url = new URL(URL_VENDA_WS);
+            QName qname = new QName(NAMESPACE_VENDA_WS, "VendaServerImplService");
+            Service ws = Service.create(url, qname);
+            VendaServerInterface vendaServer = ws.getPort(VendaServerInterface.class);
+            vendaServer.setServerTime(wsTime);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Status getServerStatus(Server server) {
+        try {
+            URL url = new URL("http://" + server.getIp() + ":" + server.getPort() + "/br.furb.ws.venda.server?wsdl");
+            QName qname = new QName(NAMESPACE_VENDA_WS, "VendaServerImplService");
             Service ws = Service.create(url, qname);
             VendaServerInterface vendaServer = ws.getPort(VendaServerInterface.class);
             return vendaServer.getServer().getStatus();
-        } catch (WebServiceException wse) {
-            wse.printStackTrace();
-            return Status.INTERNAL_SERVER_ERROR;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return Status.INTERNAL_SERVER_ERROR;
     }
 }

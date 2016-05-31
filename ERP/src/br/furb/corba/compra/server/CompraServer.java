@@ -12,7 +12,6 @@ import br.furb.corba.compra.CompraHelper;
 import br.furb.corba.compra.CompraImpl;
 import br.furb.ws.leaderelection.Server;
 import br.furb.ws.leaderelection.TypeServer;
-import br.furb.ws.status.Status;
 
 public class CompraServer {
 
@@ -21,9 +20,7 @@ public class CompraServer {
             // Cria e inicializa o ORB
             ORB orb = ORB.init(args, null);
 
-            Server server = new Server();
-            server.setStatus(Status.OK);
-            server.setTypeServer(TypeServer.CORBA);
+            Server server = new Server("localhost", 80, TypeServer.CORBA);
             // Cria a implementação e registra no ORB
             CompraImpl compras = new CompraImpl(server);
 

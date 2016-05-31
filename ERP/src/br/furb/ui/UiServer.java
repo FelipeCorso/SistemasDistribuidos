@@ -2,11 +2,6 @@ package br.furb.ui;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
 import java.util.Date;
 
 import javax.swing.GroupLayout;
@@ -21,7 +16,10 @@ import javax.swing.JTextPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SpinnerDateModel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.DefaultCaret;
 import javax.swing.text.StyledDocument;
+
+import org.joda.time.LocalTime;
 
 public class UiServer extends JFrame {
 
@@ -54,9 +52,8 @@ public class UiServer extends JFrame {
         JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(timeSpinner, "HH:mm:ss.S");
         timeSpinner.setEditor(timeEditor);
 
-        Instant instant = serverTime.atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant();
-
-        timeSpinner.setValue(Date.from(instant));
+        Date date = serverTime.toDateTimeToday().toDate();
+        timeSpinner.setValue(date);
 
         JButton btnDefine = new JButton("Definir");
         btnDefine.addMouseListener(new MouseAdapter() {
@@ -64,11 +61,13 @@ public class UiServer extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 Date time = (Date) timeSpinner.getValue();
-                Instant instant = Instant.ofEpochMilli(time.getTime());
-                serverTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalTime();
+                serverTime = new LocalTime(time.getTime());
                 setCurrentTime(serverTime);
             }
         });
+
+        DefaultCaret caret = (DefaultCaret) textPane.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
         JScrollPane scrollPane = new JScrollPane();
         GroupLayout gl_contentPane = new GroupLayout(contentPane);
