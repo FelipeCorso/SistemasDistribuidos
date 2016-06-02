@@ -18,5 +18,5 @@ public interface BullyServerInterface {
     public Server getLeader();
 
     @WebMethod
-    public void electServer(Server server);
+    public void electServer(Server server, Server currentlyLeader);
 }

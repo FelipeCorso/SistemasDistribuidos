@@ -61,8 +61,10 @@ public class Server {
         sb.append(" Port: ");
         sb.append(getPort());
 
-        sb.append(" Type: ");
-        sb.append(getTypeServer().toString());
+        if (getTypeServer() != null) {
+            sb.append(" Type: ");
+            sb.append(getTypeServer().toString());
+        }
 
         return sb.toString();
     }
@@ -76,12 +78,13 @@ public class Server {
             return false;
         }
         Server server = (Server) obj;
-        if (this.getIp() != null && server.getIp() != null /**/
-            && this.getIp().equals(server.getIp())/**/
-            && this.getPort() == server.getPort()/**/
-            && this.getTypeServer() != null && server.getTypeServer() != null/**/
-            && this.getTypeServer().equals(server.getTypeServer())) {
-            return true;
+        if (((this.getIp() != null && server.getIp() != null) && this.getIp().equals(server.getIp())) || (this.getIp() == null && server.getIp() == null)) {
+            if (this.getPort() == server.getPort()) {
+                if (((this.getTypeServer() != null && server.getTypeServer() != null) && this.getTypeServer().equals(server.getTypeServer())) /**/
+                    || (this.getTypeServer() == null && server.getTypeServer() == null)) {
+                    return true;
+                }
+            }
         }
 
         return false;

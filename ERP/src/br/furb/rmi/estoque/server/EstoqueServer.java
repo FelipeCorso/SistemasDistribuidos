@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import org.joda.time.LocalTime;
 
 import br.furb.common.Produto;
-import br.furb.common.UpdateServerTime;
 import br.furb.corba.compra.Compra;
 import br.furb.corba.compra.client.CompraClient;
 import br.furb.rmi.estoque.ArquivoEstoque;
@@ -18,6 +17,7 @@ import br.furb.rmi.estoque.Estoque;
 import br.furb.ui.UiServer;
 import br.furb.ws.leaderelection.Server;
 import br.furb.ws.leaderelection.TypeServer;
+import br.furb.ws.leaderelection.bully.BullyAlgorithm;
 import br.furb.ws.leaderelection.bully.client.BullyClient;
 
 public class EstoqueServer implements Estoque {
@@ -124,7 +124,7 @@ public class EstoqueServer implements Estoque {
 
     @Override
     public void checkIfLeaderIsAlive() {
-        UpdateServerTime.checkIfLeaderIsAlive(uiServer, server);
+        BullyAlgorithm.checkIfLeaderIsAlive(uiServer, server);
     }
 
     @Override

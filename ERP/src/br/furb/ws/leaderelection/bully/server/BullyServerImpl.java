@@ -41,25 +41,27 @@ public class BullyServerImpl implements BullyServerInterface {
     }
 
     @Override
-    public void electServer(Server server) {
+    public void electServer(Server server, Server currentlyLeader) {
         synchronized(this.leader) {
-            /*
-            * Se chegou no método de eleição é porque o servidor não respondeu, então o remove da lista. 
-            */
-            int leaderIndex = servers.indexOf(this.leader);
-            if (leaderIndex >= 0) {
-                servers.remove(leaderIndex);
-            }
+            if (this.leader.equals(currentlyLeader)) {
+                /*
+                * Se chegou no método de eleição é porque o servidor não respondeu, então o remove da lista. 
+                */
+                int leaderIndex = servers.indexOf(this.leader);
+                if (leaderIndex >= 0) {
+                    servers.remove(leaderIndex);
+                }
 
-            // Define como novo líder o servidor com o maior id
-            int newLeaderIndex = servers.size() - 1;
-            if (newLeaderIndex < 0) {
-                this.leader = servers.get(0);
-            } else {
-                this.leader = servers.get(newLeaderIndex);
-            }
+                // Define como novo líder o servidor com o maior id
+                int newLeaderIndex = servers.size() - 1;
+                if (newLeaderIndex < 0) {
+                    this.leader = servers.get(0);
+                } else {
+                    this.leader = servers.get(newLeaderIndex);
+                }
 
-            uiServer.addServerLog("Novo líder definido, " + this.leader.toString());
+                uiServer.addServerLog("Novo líder definido, " + this.leader.toString());
+            }
         }
     }
 

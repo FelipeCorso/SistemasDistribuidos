@@ -5,11 +5,11 @@ import java.rmi.RemoteException;
 import org.joda.time.LocalTime;
 
 import br.furb.common.Produto;
-import br.furb.common.UpdateServerTime;
 import br.furb.rmi.estoque.Estoque;
 import br.furb.rmi.estoque.client.ClientEstoque;
 import br.furb.ui.UiServer;
 import br.furb.ws.leaderelection.Server;
+import br.furb.ws.leaderelection.bully.BullyAlgorithm;
 
 public class CompraImpl extends CompraPOA {
 
@@ -53,7 +53,7 @@ public class CompraImpl extends CompraPOA {
 
     @Override
     public void checkIfLeaderIsAlive() {
-        UpdateServerTime.checkIfLeaderIsAlive(uiServer, server);
+        BullyAlgorithm.checkIfLeaderIsAlive(uiServer, server);
     }
 
     @Override

@@ -44,12 +44,12 @@ public class BullyClient {
         return bullyServer.getLeader();
     }
 
-    public void electServer(Server server) throws MalformedURLException {
+    public void electServer(Server server, Server currentlyLeader) throws MalformedURLException {
         URL url = new URL(getServerURL());
         QName qname = new QName(NAMESPACE_URI, "BullyServerImplService");
         Service ws = Service.create(url, qname);
         BullyServerInterface bullyServer = ws.getPort(BullyServerInterface.class);
-        bullyServer.electServer(server);
+        bullyServer.electServer(server, currentlyLeader);
     }
 
     public String getServerURL() {

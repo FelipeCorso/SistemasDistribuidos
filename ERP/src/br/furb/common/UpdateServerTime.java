@@ -14,9 +14,7 @@ import br.furb.corba.compra.client.CompraClient;
 import br.furb.rmi.estoque.client.EstoqueClient;
 import br.furb.ui.UiServer;
 import br.furb.ws.leaderelection.Server;
-import br.furb.ws.leaderelection.bully.BullyAlgorithm;
 import br.furb.ws.leaderelection.bully.client.BullyClient;
-import br.furb.ws.status.Status;
 import br.furb.ws.venda.client.VendaClient;
 
 public final class UpdateServerTime {
@@ -60,27 +58,6 @@ public final class UpdateServerTime {
 
             uiServer.addServerLog("Finalizando sincronização dos relógios...");
         }
-    }
-
-    public static void checkIfLeaderIsAlive(UiServer uiServer, Server server) {
-        while (true) {
-            try {
-                Thread.sleep(5000);
-                uiServer.addServerLog("Verificando se o líder está ativo.");
-                BullyAlgorithm bullyAlgorithm = new BullyAlgorithm();
-                Status leaderStatus = bullyAlgorithm.getLeaderStatus(server);
-                if (leaderStatus != Status.OK) {
-                    BullyClient.getInstance().electServer(server);
-                    uiServer.addServerLog("Servidor definido como líder.");
-                }
-
-                updateServerTime(uiServer, server);
-            } catch (InterruptedException | MalformedURLException | InvalidName | NotFound | CannotProceed
-                    | org.omg.CosNaming.NamingContextPackage.InvalidName | RemoteException | NotBoundException e) {
-                e.printStackTrace();
-            }
-        }
-
     }
 
 }
