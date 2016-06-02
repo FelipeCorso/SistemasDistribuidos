@@ -12,6 +12,7 @@ import br.furb.corba.compra.CompraHelper;
 import br.furb.corba.compra.CompraImpl;
 import br.furb.ws.leaderelection.Server;
 import br.furb.ws.leaderelection.TypeServer;
+import br.furb.ws.leaderelection.bully.client.BullyClient;
 
 public class CompraServer {
 
@@ -41,6 +42,7 @@ public class CompraServer {
             NameComponent path[] = namecontextRef.to_name(name);
             namecontextRef.rebind(path, href);
 
+            BullyClient.getInstance().addServer(server);
             compras.checkIfLeaderIsAlive();
 
             // Aguarda chamadas dos clientes

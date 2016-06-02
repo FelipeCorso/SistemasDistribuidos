@@ -1,7 +1,7 @@
 package br.furb.ws.leaderelection;
 
 public enum TypeServer {
-    CORBA(0), RMI(1), WS(2);
+        CORBA(0), RMI(1), WS(2), BULLY(99);
 
     private final int code;
 

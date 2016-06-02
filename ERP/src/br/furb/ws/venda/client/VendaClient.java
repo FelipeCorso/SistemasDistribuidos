@@ -2,6 +2,7 @@ package br.furb.ws.venda.client;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
@@ -14,11 +15,35 @@ import br.furb.ws.venda.server.VendaServerInterface;
 
 public class VendaClient {
 
-    private static final String URL_VENDA_WS = "http://127.0.0.1:9876/br.furb.ws.venda.server?wsdl";
+    private static final String DEFAULT_LOCALHOST = "127.0.0.1";
+    private static final int DEFAULT_PORT = 9876;
+    private static final VendaClient INSTANCE = new VendaClient();
+    private static final String URL_VENDA_WS = "http://{0}:{1}/br.furb.ws.venda.server?wsdl";
     private static final String NAMESPACE_VENDA_WS = "http://server.venda.ws.furb.br/";
+    private String host;
+    private int port;
+
+    private VendaClient() {
+        // Singleton
+    }
+
+    public static VendaClient getInstance() {
+        return INSTANCE;
+    }
+
+    public String getServerURL() {
+
+        if (getHost() == null || getHost().isEmpty()) {
+            setHost(DEFAULT_LOCALHOST);
+        }
+        if (getPort() == 0) {
+            setPort(DEFAULT_PORT);
+        }
+        return MessageFormat.format(URL_VENDA_WS, getHost(), String.valueOf(getPort()));
+    }
 
     public static void main(String args[]) throws Exception {
-        URL url = new URL(URL_VENDA_WS);
+        URL url = new URL(VendaClient.getInstance().getServerURL());
         QName qname = new QName(NAMESPACE_VENDA_WS, "VendaServerImplService");
         Service ws = Service.create(url, qname);
         VendaServerInterface venda = ws.getPort(VendaServerInterface.class);
@@ -28,9 +53,9 @@ public class VendaClient {
         System.out.println("Type: " + server.getTypeServer().toString());
     }
 
-    public static VendaServerInterface retornaClientVendas() {
+    public VendaServerInterface retornaClientVendas() {
         try {
-            URL url = new URL(URL_VENDA_WS);
+            URL url = new URL(getServerURL());
             QName qname = new QName(NAMESPACE_VENDA_WS, "VendaServerImplService");
             Service ws = Service.create(url, qname);
             VendaServerInterface venda = ws.getPort(VendaServerInterface.class);
@@ -43,7 +68,7 @@ public class VendaClient {
 
     public LocalTime getServerTime() {
         try {
-            URL url = new URL(URL_VENDA_WS);
+            URL url = new URL(getServerURL());
             QName qname = new QName(NAMESPACE_VENDA_WS, "VendaServerImplService");
             Service ws = Service.create(url, qname);
             VendaServerInterface vendaServer = ws.getPort(VendaServerInterface.class);
@@ -56,7 +81,7 @@ public class VendaClient {
 
     public void setServerTime(LocalTime wsTime) {
         try {
-            URL url = new URL(URL_VENDA_WS);
+            URL url = new URL(getServerURL());
             QName qname = new QName(NAMESPACE_VENDA_WS, "VendaServerImplService");
             Service ws = Service.create(url, qname);
             VendaServerInterface vendaServer = ws.getPort(VendaServerInterface.class);
@@ -78,4 +103,21 @@ public class VendaClient {
         }
         return Status.INTERNAL_SERVER_ERROR;
     }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
 }

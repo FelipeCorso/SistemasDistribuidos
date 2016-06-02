@@ -20,12 +20,12 @@ public class BullyAlgorithm {
     private static final int NUMBER_OF_ATTEMPTS = 3;
 
     public Status getLeaderStatus(Server server) throws MalformedURLException {
-        BullyClient bullyClient = new BullyClient();
         Status leaderStatus = Status.INTERNAL_SERVER_ERROR;
         try {
             int i = 0;
             while (i < NUMBER_OF_ATTEMPTS && leaderStatus == Status.INTERNAL_SERVER_ERROR) {
-                Server leader = bullyClient.getLeader();
+                Thread.sleep(5000);
+                Server leader = BullyClient.getInstance().getLeader();
                 if (leader.getStatus() != Status.INTERNAL_SERVER_ERROR) {
                     switch (leader.getTypeServer()) {
                         case CORBA:
@@ -37,15 +37,14 @@ public class BullyAlgorithm {
                             leaderStatus = estoqueClient.getServerStatus(leader);
                             break;
                         case WS:
-                            VendaClient client = new VendaClient();
-                            leaderStatus = client.getServerStatus(leader);
+                            leaderStatus = VendaClient.getInstance().getServerStatus(leader);
                             break;
                     }
                 }
                 i++;
             }
         } catch (InvalidName | NotFound | CannotProceed | org.omg.CosNaming.NamingContextPackage.InvalidName
-                | RemoteException | NotBoundException e) {
+                | RemoteException | NotBoundException | InterruptedException e) {
             e.printStackTrace();
         }
         return leaderStatus;

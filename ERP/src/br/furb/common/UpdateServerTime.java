@@ -22,16 +22,14 @@ import br.furb.ws.venda.client.VendaClient;
 public final class UpdateServerTime {
 
     public static void updateServerTime(UiServer uiServer, Server server) throws MalformedURLException, InvalidName, NotFound, CannotProceed, org.omg.CosNaming.NamingContextPackage.InvalidName, RemoteException, NotBoundException {
-        BullyClient bullyClient = new BullyClient();
-        Server leader = bullyClient.getLeader();
+        Server leader = BullyClient.getInstance().getLeader();
         // Apenas atualiza se o server for o líder
         if (server.equals(leader)) {
 
             uiServer.addServerLog("Inicializando sincronização de relógios.");
 
             uiServer.addServerLog("Obtendo hora do módulo venda(WS)");
-            VendaClient wsClient = new VendaClient();
-            LocalTime wsTime = wsClient.getServerTime();
+            LocalTime wsTime = VendaClient.getInstance().getServerTime();
 
             uiServer.addServerLog("Obtendo hora do módulo compra(Corba)");
             CompraClient corbaClient = new CompraClient();
@@ -54,7 +52,7 @@ public final class UpdateServerTime {
             rmiTime = rmiTime.plusSeconds(differenceRMIIdealTime);
 
             uiServer.addServerLog("Atualizando hora do módulo venda(WS)");
-            wsClient.setServerTime(wsTime);
+            VendaClient.getInstance().setServerTime(wsTime);
             uiServer.addServerLog("Atualizando hora do módulo compra(Corba)");
             corbaClient.setServerTime(corbaTime);
             uiServer.addServerLog("Atualizando hora do módulo estoque(rmi)");
@@ -72,8 +70,7 @@ public final class UpdateServerTime {
                 BullyAlgorithm bullyAlgorithm = new BullyAlgorithm();
                 Status leaderStatus = bullyAlgorithm.getLeaderStatus(server);
                 if (leaderStatus != Status.OK) {
-                    BullyClient bullyClient = new BullyClient();
-                    bullyClient.electServer(server);
+                    BullyClient.getInstance().electServer(server);
                     uiServer.addServerLog("Servidor definido como líder.");
                 }
 
@@ -84,25 +81,6 @@ public final class UpdateServerTime {
             }
         }
 
-    }
-
-    public static void main(String[] args) {
-
-        LocalTime wsTime = new LocalTime(3, 0);
-        LocalTime corbaTime = new LocalTime(2, 50);
-        LocalTime rmiTime = new LocalTime(3, 25);
-
-        int amountServers = 3;
-        long idealTimeL = (wsTime.getMillisOfDay() + corbaTime.getMillisOfDay() + rmiTime.getMillisOfDay()) / amountServers;
-        LocalTime idealTime = LocalTime.fromMillisOfDay(idealTimeL);
-
-        int differenceWSIdealTime = Seconds.secondsBetween(wsTime, idealTime).getSeconds();
-        int differenceCorbaIdealTime = Seconds.secondsBetween(corbaTime, idealTime).getSeconds();
-        int differenceRMIIdealTime = Seconds.secondsBetween(rmiTime, idealTime).getSeconds();
-
-        wsTime = wsTime.plusSeconds(differenceWSIdealTime);
-        corbaTime = corbaTime.plusSeconds(differenceCorbaIdealTime);
-        rmiTime = rmiTime.plusSeconds(differenceRMIIdealTime);
     }
 
 }

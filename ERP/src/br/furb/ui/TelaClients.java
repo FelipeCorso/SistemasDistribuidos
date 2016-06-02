@@ -87,7 +87,7 @@ public class TelaClients extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                VendaServerInterface venda = VendaClient.retornaClientVendas();
+                VendaServerInterface venda = VendaClient.getInstance().retornaClientVendas();
                 Produto produto = new Produto();
                 int xCodigo = Integer.parseInt(edCodigoProduto.getText());
                 int xQtdProduto = Integer.parseInt(edQtdProduto.getText());

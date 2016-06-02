@@ -18,6 +18,7 @@ import br.furb.rmi.estoque.Estoque;
 import br.furb.ui.UiServer;
 import br.furb.ws.leaderelection.Server;
 import br.furb.ws.leaderelection.TypeServer;
+import br.furb.ws.leaderelection.bully.client.BullyClient;
 
 public class EstoqueServer implements Estoque {
 
@@ -64,7 +65,7 @@ public class EstoqueServer implements Estoque {
             // Bind the remote object's stub in the registry
             Registry registry = LocateRegistry.getRegistry(server.getIp(), server.getPort());
             registry.bind("Estoque", stub);
-
+            BullyClient.getInstance().addServer(server);
             stub.checkIfLeaderIsAlive();
 
         } catch (Exception e) {

@@ -32,6 +32,7 @@ public class BullyServerImpl implements BullyServerInterface {
     @Override
     public void addServer(Server server) {
         servers.add(server);
+        uiServer.addServerLog("Adicionado servidor: " + server.toString());
     }
 
     @Override
@@ -42,8 +43,23 @@ public class BullyServerImpl implements BullyServerInterface {
     @Override
     public void electServer(Server server) {
         synchronized(this.leader) {
-            this.leader = server;
-            uiServer.addServerLog("Novo líder definido, " + server.toString());
+            /*
+            * Se chegou no método de eleição é porque o servidor não respondeu, então o remove da lista. 
+            */
+            int leaderIndex = servers.indexOf(this.leader);
+            if (leaderIndex >= 0) {
+                servers.remove(leaderIndex);
+            }
+
+            // Define como novo líder o servidor com o maior id
+            int newLeaderIndex = servers.size() - 1;
+            if (newLeaderIndex < 0) {
+                this.leader = servers.get(0);
+            } else {
+                this.leader = servers.get(newLeaderIndex);
+            }
+
+            uiServer.addServerLog("Novo líder definido, " + this.leader.toString());
         }
     }
 

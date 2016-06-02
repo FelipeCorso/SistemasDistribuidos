@@ -76,8 +76,10 @@ public class Server {
             return false;
         }
         Server server = (Server) obj;
-        if (this.getIp().equals(server.getIp())/**/
+        if (this.getIp() != null && server.getIp() != null /**/
+            && this.getIp().equals(server.getIp())/**/
             && this.getPort() == server.getPort()/**/
+            && this.getTypeServer() != null && server.getTypeServer() != null/**/
             && this.getTypeServer().equals(server.getTypeServer())) {
             return true;
         }
