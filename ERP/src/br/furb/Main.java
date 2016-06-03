@@ -21,8 +21,10 @@ public class Main {
 
             TypeServer typeServer = TypeServer.valueOf(args[2]);
             List<String> params = new ArrayList<>();
-            for (int i = 3; i < args.length; i++) {
-                params.add(args[i]);
+            if (args.length > 3) {
+                for (int i = 3; i < args.length; i++) {
+                    params.add(args[i]);
+                }
             }
             switch (typeServer) {
                 case CORBA:
@@ -37,8 +39,6 @@ public class Main {
                     VendaServerPublisher.main(params.toArray(new String[0]));
                     break;
                 case BULLY:
-                    BullyClient.getInstance().setHost(args[3]);
-                    BullyClient.getInstance().setPort(Integer.parseInt(args[4]));
                     BullyServerPublisher.main(params.toArray(new String[0]));
                     break;
             }
