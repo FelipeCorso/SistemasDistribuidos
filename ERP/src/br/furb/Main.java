@@ -14,10 +14,14 @@ import br.furb.ws.venda.server.VendaServerPublisher;
 public class Main {
 
     public static void main(String[] args) {
-        if (args != null) {
-            TypeServer typeServer = TypeServer.valueOf(args[0]);
+        if (args != null && args.length > 0) {
+
+            BullyClient.getInstance().setHost(args[0]);
+            BullyClient.getInstance().setPort(Integer.parseInt(args[1]));
+
+            TypeServer typeServer = TypeServer.valueOf(args[2]);
             List<String> params = new ArrayList<>();
-            for (int i = 1; i < args.length; i++) {
+            for (int i = 3; i < args.length; i++) {
                 params.add(args[i]);
             }
             switch (typeServer) {
@@ -28,26 +32,18 @@ public class Main {
                     EstoqueServer.main(params.toArray(new String[0]));
                     break;
                 case WS:
-                    if (args.length > 1) { // host
-                        VendaClient.getInstance().setHost(args[1]);
-                        if (args.length > 2) { // port
-                            VendaClient.getInstance().setPort(Integer.parseInt(args[2]));
-                        }
-                    }
+                    VendaClient.getInstance().setHost(args[3]);
+                    VendaClient.getInstance().setPort(Integer.parseInt(args[4]));
                     VendaServerPublisher.main(params.toArray(new String[0]));
                     break;
                 case BULLY:
-                    if (args.length > 1) { // host
-                        BullyClient.getInstance().setHost(args[1]);
-                        if (args.length > 2) {// port
-                            BullyClient.getInstance().setPort(Integer.parseInt(args[2]));
-                        }
-                    }
+                    BullyClient.getInstance().setHost(args[3]);
+                    BullyClient.getInstance().setPort(Integer.parseInt(args[4]));
                     BullyServerPublisher.main(params.toArray(new String[0]));
                     break;
-                default:
-                    throw new RuntimeException("TypeServer undefined");
             }
+        } else {
+            throw new RuntimeException("TypeServer undefined");
         }
     }
 
